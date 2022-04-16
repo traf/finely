@@ -1,0 +1,12 @@
+.hero {
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    height: 800px;
+    display: flex;
+}
+
+.hero h1 {
+    text-align: center;
+    max-width: 740px;
+}

@@ -1,0 +1,27 @@
+.nav {
+    background: var(--black);
+    position: fixed;
+    padding: 48px 0;
+    width: 100%;
+    left: 0;
+    top: 0;
+}
+
+.nav .container {
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+}
+
+.nav-links {
+    align-items: center;
+    display: flex;
+}
+
+.nav-links a {
+    padding: 20px;
+}
+
+.nav-links .button {
+    margin-left: 16px;
+}

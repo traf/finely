@@ -1,0 +1,21 @@
+h1 {
+    letter-spacing: -3px;
+    margin-bottom: 60px;
+    font-weight: 700;
+    line-height: 1.2;
+    font-size: 68px;
+}
+
+p, a {
+    letter-spacing: -0.6px;
+    color: var(--grey);
+    font-size: 18px;
+}
+
+a {
+    transition: var(--transition);
+}
+
+a:hover {
+    color: var(--white);
+}

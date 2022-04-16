@@ -3,7 +3,7 @@ import { createStitches } from '@stitches/react';
 export const { createTheme, styled, getCssText, globalCss, css } = createStitches({
   theme: {
     colors: {
-      background: '#ffffff'
+      background: '#0d0d0d'
     },
     fonts: {
       body: '"Inter", sans-serif'
@@ -51,6 +51,4 @@ export const dark = createTheme({
 
 export const globalStyles = globalCss({
   '@import': ['styles/main.css'],
-  'hmtl, body': { fontFamily: '$body', backgroundColor: '$background' },
-  '*': { margin: 0, padding: 0, boxSizing: 'border-box' }
 });

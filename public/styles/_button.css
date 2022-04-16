@@ -1,0 +1,48 @@
+.button {
+    border-radius: var(--rounded-pill);
+    transition: var(--transition);
+    background: var(--off-black);
+    letter-spacing: -0.4px;
+    align-items: center;
+    color: var(--white);
+    font-size: 18px;
+    padding: 0 24px;
+    display: flex;
+    height: 52px;
+    gap: 8px;
+}
+
+.button:hover {
+    background: var(--borders);
+}
+
+.button:active {
+    transform: scale(0.96);
+}
+
+.button.primary {
+    background: var(--off-white);
+    color: var(--black);
+}
+
+.button.primary:hover {
+    background: var(--white);
+}
+
+.button.primary img {
+    filter: invert(1);
+    width: 12px;
+}
+
+.button.small {
+    border-radius: var(--rounded-sm);
+    font-size: 16px;
+    padding: 0 20px;
+    height: 44px;
+}
+
+.buttons {
+    align-items: center;
+    display: flex;
+    gap: 16px
+}
