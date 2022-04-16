@@ -1,0 +1,29 @@
+{
+  "name": "finely",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.9.0",
+    "@mdx-js/react": "^2.1.1",
+    "@stitches/react": "^1.2.7",
+    "next": "12.1.5",
+    "react": "18.0.0",
+    "react-dom": "18.0.0",
+    "theme-ui": "^0.14.2"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.24",
+    "@types/react": "18.0.5",
+    "@types/react-dom": "18.0.1",
+    "eslint": "8.13.0",
+    "eslint-config-next": "12.1.5",
+    "sass": "^1.50.0",
+    "typescript": "4.6.3"
+  }
+}
