@@ -6,7 +6,8 @@ h1 {
     font-size: 68px;
 }
 
-p, a {
+p,
+a {
     letter-spacing: -0.6px;
     color: var(--grey);
     font-size: 18px;
@@ -14,8 +15,8 @@ p, a {
 
 a {
     transition: var(--transition);
-}
 
-a:hover {
-    color: var(--white);
+    &:hover {
+        color: var(--white);
+    }
 }

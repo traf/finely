@@ -50,5 +50,5 @@ export const dark = createTheme({
 });
 
 export const globalStyles = globalCss({
-  '@import': ['styles/main.css'],
+  '@import': ['styles/main.scss'],
 });

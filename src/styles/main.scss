@@ -1,8 +1,9 @@
-@import '_reset.css';
-@import '_button.css';
-@import '_type.css';
-@import '_nav.css';
-@import '_hero.css';
+@import 'reset';
+@import 'button';
+@import 'type';
+@import 'nav';
+@import 'hero';
+@import 'logo';
 
 :root {
     --black: #0d0d0d;
@@ -20,6 +21,11 @@
     --transition: all .12s ease-in-out;
 }
 
+$primary: #06f;
+$black: #000;
+$grey: #808c99;
+$white: #fff;
+
 body {
     font-family: "Inter", sans-serif;
     background: var(--black);
@@ -31,14 +37,6 @@ body {
     max-width: 90%;
     margin: 0 auto;
     width: 1280px;
-}
-
-.logo {
-    transition: var(--transition);
-}
-
-.logo:active {
-    transform: scale(0.96);
 }
 
 .icon {

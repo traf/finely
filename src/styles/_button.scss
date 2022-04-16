@@ -10,28 +10,29 @@
     display: flex;
     height: 52px;
     gap: 8px;
-}
 
-.button:hover {
-    background: var(--borders);
-}
+    &:hover {
+        background: var(--borders);
+    }
 
-.button:active {
-    transform: scale(0.96);
+    &:active {
+        transform: scale(0.96);
+    }
+
 }
 
 .button.primary {
     background: var(--off-white);
     color: var(--black);
-}
 
-.button.primary:hover {
-    background: var(--white);
-}
+    &:hover {
+        background: var(--white);
+    }
 
-.button.primary img {
-    filter: invert(1);
-    width: 12px;
+    img {
+        filter: invert(1);
+        width: 12px;
+    }
 }
 
 .button.small {
