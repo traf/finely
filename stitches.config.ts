@@ -50,7 +50,6 @@ export const dark = createTheme({
 });
 
 export const globalStyles = globalCss({
-  '@import': ['styles/main.css'],
   'hmtl, body': { fontFamily: '$body', backgroundColor: '$background' },
   '*': { margin: 0, padding: 0, boxSizing: 'border-box' }
 });
