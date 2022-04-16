@@ -1,9 +1,17 @@
 import { createStitches } from '@stitches/react';
 
-export const { createTheme, styled, getCssText, globalCss, css } = createStitches({
+export const stitchesInstance = createStitches({
   theme: {
     colors: {
-      background: '#0d0d0d'
+      background: '#ffffff',
+      text: '#ffffff',
+      accentText: '#818892',
+      black: '#0d0d0d',
+      offBlack: '#1d1d1d',
+      grey: '#818892',
+      white: '#fff',
+      offWhite: '#f0f0f0',
+      borders: '#222'
     },
     fonts: {
       body: '"Inter", sans-serif'
@@ -25,7 +33,17 @@ export const { createTheme, styled, getCssText, globalCss, css } = createStitche
       11: '44px',
       12: '48px',
       13: '52px',
-      14: '56px'
+      14: '56px',
+      15: '60px',
+      16: '64px',
+      17: '68px',
+      18: '72px'
+    },
+    radii: {
+      sm: '8px',
+      md: '12px',
+      lg: '20px',
+      pill: '100px'
     }
   },
   media: {
@@ -36,19 +54,38 @@ export const { createTheme, styled, getCssText, globalCss, css } = createStitche
     '2xl': '(min-width: 1536px)'
   },
   utils: {
-    mx: (value: number) => ({ marginLeft: value, marginRight: value }),
-    my: (value: number) => ({ marginTop: value, marginBottom: value }),
-    px: (value: number) => ({ paddingLeft: value, paddingRight: value }),
-    py: (value: number) => ({ paddingTop: value, paddingBottom: value })
+    mx: (value: any) => ({ marginLeft: value, marginRight: value }),
+    my: (value: any) => ({ marginTop: value, marginBottom: value }),
+    px: (value: any) => ({ paddingLeft: value, paddingRight: value }),
+    py: (value: any) => ({ paddingTop: value, paddingBottom: value })
   }
 });
 
-export const dark = createTheme({
+export const { createTheme, styled, getCssText, globalCss, css } = stitchesInstance;
+
+export const lightMode = createTheme('light-mode', {
   colors: {
-    background: '#000000'
+    background: '#ffffff',
+    text: '#000000',
+    accentText: '#000000'
+  }
+});
+
+export const darkMode = createTheme('dark-mode', {
+  colors: {
+    background: '#121212',
+    text: '#ffffff',
+    accentText: '#818892'
   }
 });
 
 export const globalStyles = globalCss({
-  '@import': ['styles/main.scss'],
+  'hmtl, body': { fontFamily: '$body', backgroundColor: '$background', color: '$text' },
+  '*': {
+    margin: 0,
+    padding: 0,
+    boxSizing: 'border-box',
+    '-webkit-font-smoothing': 'antialiased',
+    '-moz-osx-font-smoothing': 'grayscale'
+  }
 });
