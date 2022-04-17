@@ -1,3 +1,3 @@
 import { styled } from '@root/stitches.config';
 
-export const Box = styled('button', {});
+export const Box = styled('div', {});
