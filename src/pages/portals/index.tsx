@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { styled } from '@root/stitches.config';
+import { PlusSmIcon } from '@heroicons/react/outline';
 
 // components
 import { Box } from '@components/core';
+import { PrimaryButton } from '@components/core/Button';
+import { MainLayout } from '@components/layout/MainLayout';
 
 const fakePortals = [
   {
@@ -76,40 +79,52 @@ const PortalCopyValueInput = styled('input', {
   backgroundColor: '#222222'
 });
 
+const AddPortalIcon = styled(PlusSmIcon, {
+  width: '24px',
+  height: '24px'
+});
+
 export default function () {
   const [portals, setPortals] = useState(fakePortals);
   return (
-    <Box css={{ maxWidth: '1200px', margin: '0 auto' }}>
-      <PageTitle>Portals</PageTitle>
-      <PortalItemsList>
-        {portals.map((portal) => (
-          <PortalItem key={portal.name}>
-            {/* Portal name */}
-            <PortalItemSection>
-              <PortalItemSectionName>Name</PortalItemSectionName>
-              <PortalItemSectionContent>
-                <PortalName>{portal.name}</PortalName>
-              </PortalItemSectionContent>
-            </PortalItemSection>
+    <MainLayout>
+      <Box css={{ maxWidth: '90%', width: '1280px', margin: '60px auto 0' }}>
+        <Box css={{ display: 'flex', justifyContent: 'space-between' }}>
+          <PageTitle>Portals</PageTitle>
+          <PrimaryButton>
+            New Portal <AddPortalIcon />
+          </PrimaryButton>
+        </Box>
+        <PortalItemsList>
+          {portals.map((portal) => (
+            <PortalItem key={portal.name}>
+              {/* Portal name */}
+              <PortalItemSection>
+                <PortalItemSectionName>Name</PortalItemSectionName>
+                <PortalItemSectionContent>
+                  <PortalName>{portal.name}</PortalName>
+                </PortalItemSectionContent>
+              </PortalItemSection>
 
-            {/* Portal script */}
-            <PortalItemSection>
-              <PortalItemSectionName>Script</PortalItemSectionName>
-              <PortalItemSectionContent>
-                <PortalCopyValueInput readOnly={true} value={portal.scriptTag} />
-              </PortalItemSectionContent>
-            </PortalItemSection>
+              {/* Portal script */}
+              <PortalItemSection>
+                <PortalItemSectionName>Script</PortalItemSectionName>
+                <PortalItemSectionContent>
+                  <PortalCopyValueInput readOnly={true} value={portal.scriptTag} />
+                </PortalItemSectionContent>
+              </PortalItemSection>
 
-            {/* Portal Connect button ID */}
-            <PortalItemSection>
-              <PortalItemSectionName>Connect Button ID</PortalItemSectionName>
-              <PortalItemSectionContent>
-                <PortalCopyValueInput readOnly={true} value={portal.connectButtonId} />
-              </PortalItemSectionContent>
-            </PortalItemSection>
-          </PortalItem>
-        ))}
-      </PortalItemsList>
-    </Box>
+              {/* Portal Connect button ID */}
+              <PortalItemSection>
+                <PortalItemSectionName>Connect Button ID</PortalItemSectionName>
+                <PortalItemSectionContent>
+                  <PortalCopyValueInput readOnly={true} value={portal.connectButtonId} />
+                </PortalItemSectionContent>
+              </PortalItemSection>
+            </PortalItem>
+          ))}
+        </PortalItemsList>
+      </Box>
+    </MainLayout>
   );
 }
