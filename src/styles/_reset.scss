@@ -4,11 +4,14 @@
     margin: 0;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     scroll-behavior: smooth;
     height: 100%;
 }
@@ -18,22 +21,42 @@ body {
     line-height: 1.5;
 }
 
-iframe, img, video, canvas, svg {
+iframe,
+img,
+video,
+canvas,
+svg {
     max-width: 100%;
     display: block;
 }
 
-input, button, textarea, select {
+img {
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+input,
+button,
+textarea,
+select {
     -webkit-appearance: none;
     appearance: none;
     font: inherit;
 }
 
-button, select {
+button,
+select {
     cursor: pointer;
 }
 
-h1, h2, h3, h4, h5, h6, p {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
     overflow-wrap: break-word;
 }
 
