@@ -1,43 +1,43 @@
 .button {
-    border-radius: var(--rounded-pill);
-    transition: var(--transition);
-    background: var(--dark-grey);
-    letter-spacing: -0.5px;
-    align-items: center;
-    color: var(--white);
-    font-size: 18px;
-    padding: 0 24px;
-    display: flex;
-    height: 52px;
-    gap: 8px;
+  border-radius: var(--rounded-pill);
+  transition: var(--transition);
+  background: var(--dark-grey);
+  letter-spacing: -0.5px;
+  align-items: center;
+  color: var(--white);
+  font-size: 18px;
+  padding: 0 24px;
+  display: flex;
+  height: 52px;
+  gap: 8px;
 
-    &:hover {
-        background: var(--borders);
-    }
+  &:hover {
+    background: var(--borders);
+  }
 
-    &:active {
-        transform: scale(0.96);
-    }
+  &:active {
+    transform: scale(0.96);
+  }
 
 }
 
 .button.primary {
-    background: var(--off-white);
-    color: var(--black);
+  background: var(--off-white);
+  color: var(--black);
 
-    &:hover {
-        background: var(--white);
-    }
+  &:hover {
+    background: var(--white);
+  }
 
-    img {
-        filter: invert(1);
-        width: 12px;
-    }
+  img {
+    filter: invert(1);
+    width: 12px;
+  }
 }
 
 .button.small {
-    border-radius: var(--rounded-sm);
-    font-size: 16px;
-    padding: 0 20px;
-    height: 44px;
+  border-radius: var(--rounded-sm);
+  font-size: 16px;
+  padding: 0 20px;
+  height: 44px;
 }
