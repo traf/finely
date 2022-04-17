@@ -1,0 +1,20 @@
+.container {
+    max-width: 90%;
+    margin: 0 auto;
+    width: 1280px;
+}
+
+.row {
+    align-content: center;
+    margin-top: 80px;
+    display: flex;
+    gap: 24px;
+}
+
+.row.gap-sm {
+    gap: 12px
+}
+
+.row.gap-md {
+    gap: 16px;
+}

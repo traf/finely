@@ -1,9 +1,12 @@
 @import 'reset';
+@import 'logo';
 @import 'button';
 @import 'type';
 @import 'nav';
 @import 'hero';
-@import 'logo';
+@import 'section';
+@import 'layout';
+@import 'box';
 
 :root {
     --jet-black: #090909;
@@ -30,50 +33,12 @@ body {
     font-weight: bold;
 }
 
-.container {
-    max-width: 90%;
-    margin: 0 auto;
-    width: 1280px;
-}
-
-section {
-    padding: 120px 0;
-    width: 100%;
-
-    h4 {
-        margin-bottom: 80px;
-    }
-}
-
-section:nth-child(odd) {
-    background: var(--off-black);
-}
-
-.box {
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
-    border-radius: var(--rounded-lg);
-    background: var(--jet-black);
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    display: flex;
-    height: 600px;
-    width: 100%;
-
-    .icon {
-        color: var(--off-black);
-        width: 120px;
-    }
-}
-
-.box.offset {
-    margin-top: -200px;
-}
-
 .wheel {
+    margin: -120px 0;
+
     h3 {
         color: var(--white);
-        margin: 16px 0;
+        margin: 8px 0;
 
         &:nth-child(1),
         &:nth-child(7) {
@@ -96,8 +61,6 @@ section:nth-child(odd) {
     width: 28px;
 }
 
-.logos {
-    align-content: center;
-    display: flex;
-    gap: 12px;
+.video {
+    height: 600px;
 }

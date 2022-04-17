@@ -1,0 +1,20 @@
+section {
+    padding: 120px 0;
+    width: 100%;
+
+    h4 {
+        margin-bottom: 80px;
+    }
+
+    .box {
+        background: var(--off-black);
+    }
+
+    &:nth-child(odd) {
+        background: var(--off-black);
+
+        .box {
+            background: var(--jet-black);
+        }
+    }
+}

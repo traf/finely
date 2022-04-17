@@ -1,0 +1,19 @@
+.box {
+    border-radius: var(--rounded-lg);
+    background: var(--jet-black);
+    justify-content: center;
+    align-items: center;
+    padding: 80px 0;
+    overflow: hidden;
+    display: flex;
+    width: 100%;
+
+    .icon {
+        color: var(--off-black);
+        width: 120px;
+    }
+}
+
+.box.offset {
+    margin-top: -200px;
+}

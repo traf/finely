@@ -10,7 +10,7 @@ import { useThemeMode } from '@hooks/useThemeMode';
 function MyApp({ Component, pageProps }: AppProps) {
   const { themeClassName } = useThemeMode();
   return (
-    <Box className={themeClassName} css={{ px: '$4' }}>
+    <Box className={themeClassName}>
       <Component {...pageProps} />
     </Box>
   );
