@@ -20,11 +20,11 @@
     --rounded-lg: 20px;
     --rounded-pill: 100px;
 
-    --transition: all .12s ease-in-out;
+    --transition: all 0.12s ease-in-out;
 }
 
 body {
-    font-family: "Inter", sans-serif;
+    font-family: 'Inter', sans-serif;
     background: var(--black);
     color: var(--white);
     font-weight: bold;
