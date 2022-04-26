@@ -1,18 +1,29 @@
-import './../styles/main.scss';
 import type { AppProps } from 'next/app';
+import { Provider as WagmiProvider } from 'wagmi';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
-// components
-import { Box } from '@components/core';
+// styles
+import './../styles/main.scss';
+
+const queryClient = new QueryClient();
 
 // hooks
 import { useThemeMode } from '@hooks/useThemeMode';
 
+// libs
+import { client as wagmiClient } from './../lib/wagmi';
+
 function MyApp({ Component, pageProps }: AppProps) {
   const { themeClassName } = useThemeMode();
+  console.log('themeClassName', themeClassName);
   return (
-    <Box className={themeClassName}>
-      <Component {...pageProps} />
-    </Box>
+    <WagmiProvider client={wagmiClient}>
+      <QueryClientProvider client={queryClient}>
+        <div className={themeClassName}>
+          <Component {...pageProps} />
+        </div>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }
 

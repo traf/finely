@@ -1,7 +1,9 @@
-import Nav from '../components/Nav';
-import IconETH from '../components/IconETH';
-import { PlayIcon } from '@heroicons/react/solid';
 import Head from 'next/head';
+import { PlayIcon } from '@heroicons/react/solid';
+
+// components
+import { Nav } from '@components/Nav';
+import IconETH from '@components/IconETH';
 
 export default function Home() {
   return (
@@ -30,7 +32,10 @@ export default function Home() {
       </section>
       <section>
         <div className="container">
-          <h2>Compatibility <br />by <s>default</s> design.</h2>
+          <h2>
+            Compatibility <br />
+            by <s>default</s> design.
+          </h2>
           <h4>No matter your tech stack, Finely is compatible out of the box.</h4>
           <div className="row gap-sm">
             <img src="./icon-squarespace.svg" alt="squarespace" />
@@ -47,7 +52,10 @@ export default function Home() {
       </section>
       <section>
         <div className="container">
-          <h2>Lock access to<br /> all sorts of things.</h2>
+          <h2>
+            Lock access to
+            <br /> all sorts of things.
+          </h2>
           <h4>Token gate anything—newsletters, community links, merch, and plenty more.</h4>
           <div className="box">
             <div className="wheel">
@@ -64,14 +72,17 @@ export default function Home() {
       </section>
       <section>
         <div className="container">
-          <h2>Token-gate anything<br /> with a simple copy & paste.</h2>
+          <h2>
+            Token-gate anything
+            <br /> with a simple copy & paste.
+          </h2>
           <h4>A script tag adds functionality, with an ID on any button for the connect modal.</h4>
           <div className="row">
             <div className="box">
-              <img src="./code.png" alt="code" style={{ width: "80%" }} />
+              <img src="./code.png" alt="code" style={{ width: '80%' }} />
             </div>
             <div className="box">
-              <img src="./button.png" alt="connect" style={{ width: "200px" }} />
+              <img src="./button.png" alt="connect" style={{ width: '200px' }} />
             </div>
           </div>
         </div>

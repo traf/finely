@@ -3,18 +3,25 @@ import { createStitches } from '@stitches/react';
 export const stitchesInstance = createStitches({
   theme: {
     colors: {
-      background: '#ffffff',
-      text: '#ffffff',
-      accentText: '#818892',
-      black: '#0d0d0d',
-      offBlack: '#1d1d1d',
-      grey: '#818892',
       white: '#fff',
-      offWhite: '#f0f0f0',
-      borders: '#222'
+      border: '#222',
+      grey: '#818892',
+      offBlack: '#111',
+      black: '#0d0d0d',
+      jetBlack: '#090909',
+      darkGrey: '#1b1b1b',
+      offWhite: '#f0f0f0'
     },
     fonts: {
       body: '"Inter", sans-serif'
+    },
+    letterSpacings: {
+      tighter: '-0.05em',
+      tight: '-0.025em',
+      normal: '0',
+      wide: '0.025em',
+      wider: '0.05em',
+      widest: '0.1em'
     },
     space: {
       0: '0px',
@@ -61,7 +68,8 @@ export const stitchesInstance = createStitches({
   }
 });
 
-export const { createTheme, styled, getCssText, globalCss, css } = stitchesInstance;
+export const { theme, createTheme, styled, getCssText, globalCss, css, keyframes } =
+  stitchesInstance;
 
 export const lightMode = createTheme('light-mode', {
   colors: {
@@ -71,13 +79,7 @@ export const lightMode = createTheme('light-mode', {
   }
 });
 
-export const darkMode = createTheme('dark-mode', {
-  colors: {
-    background: '#121212',
-    text: '#ffffff',
-    accentText: '#818892'
-  }
-});
+export const darkMode = createTheme('dark-mode', {});
 
 export const globalStyles = globalCss({
   'hmtl, body': { fontFamily: '$body', backgroundColor: '$background', color: '$text' },

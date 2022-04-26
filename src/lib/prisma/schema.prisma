@@ -1,0 +1,42 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Account {
+  id            Int      @id @default(autoincrement())
+  name          String?
+  createdAt     DateTime @default(now())
+  walletAddress String   @unique
+  portals       Portal[]
+  nonce         String?  
+}
+
+model Portal {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  createdAt DateTime @default(now())
+
+  account   Account  @relation(fields: [accountId], references: [id])
+  accountId Int      @unique
+
+  connectButtonId String @default("#finely-connect")
+  rules     PortalRule[]
+}
+
+model PortalRule {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  tokenIds        String[]
+  contractAddress String
+  minBalance      Int @default(0)
+  maxBalance      Int @default(0)
+
+  portal Portal    @relation(fields: [portalId], references: [id])
+  portalId Int      @unique
+}
