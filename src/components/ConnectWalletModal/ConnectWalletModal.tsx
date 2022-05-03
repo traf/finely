@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 
@@ -5,6 +6,8 @@ import { styled, keyframes } from '@root/stitches.config';
 
 // icons
 import XIcon from '@heroicons/react/outline/XIcon';
+
+// components
 import { BaseButton, Box, Button } from '@components/core';
 
 const overlayShow = keyframes({
@@ -59,10 +62,20 @@ const ConnectorButton = styled(Button, {
   color: '$white',
   borderRadius: '$sm',
   backgroundColor: '$transparent',
+  height: 'auto',
+  display: 'flex',
+  alignItems: 'center',
   '&:hover': {
     backgroundColor: 'rgba(255, 255, 255, .05)'
   }
 });
+
+const walletIcons: any = {
+  rainbow: '/icons/rainbow.png',
+  injected: '/icons/metamask.png',
+  coinbaseWallet: '/icons/coinbase.png',
+  walletConnect: '/icons/walletconnect.png'
+};
 
 export function ConnectWalletModal({
   onClose,
@@ -110,19 +123,19 @@ export function ConnectWalletModal({
                   borderRight: '1px solid $border'
                 }}>
                 {connectors.map((connector) => (
-                  <Box key={connector.name}>
+                  <Box key={connector.name} css={{ display: 'flex' }}>
                     <ConnectorButton
                       disabled={!connector.ready}
                       key={connector.id}
                       onClick={() => connect(connector)}>
+                      <Box css={{ position: 'relative', width: 32, height: 32 }}>
+                        <Image layout="fill" src={walletIcons[connector.id]} />
+                      </Box>
                       {connector.name}
                       {!connector.ready && ' (unsupported)'}
                     </ConnectorButton>
                   </Box>
                 ))}
-                <Box>
-                  <ConnectorButton onClick={() => disconnect()}>Disconnect</ConnectorButton>
-                </Box>
               </Box>
               <Box css={{ display: 'flex', py: 32, px: 40, flex: 1 }}>
                 <Box
