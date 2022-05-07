@@ -1,2 +1,3 @@
-export { Box } from './Box';
-export { Button } from './Button';
+export * from './Box';
+export * from './Button';
+export * from './Heading';

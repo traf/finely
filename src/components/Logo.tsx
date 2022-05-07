@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import Link from 'next/link';
 
-class Logo extends Component {
-    render() {
-        return (
-            <a href="/" className="logo"><img src="./logo.svg" alt="Finely" /></a>
-        )
-    }
+export default function Logo() {
+  return (
+    <Link href="/">
+      <a className="logo">
+        <img src="./logo.svg" alt="Finely" />
+      </a>
+    </Link>
+  );
 }
-
-export default Logo;

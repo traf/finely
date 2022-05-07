@@ -1,6 +1,8 @@
 import { styled } from '@root/stitches.config';
 
-export const Button = styled('button', {
+export const BaseButton = styled('button', {});
+
+export const Button = styled(BaseButton, {
   gap: '8px',
   display: 'flex',
   alignItems: 'center',

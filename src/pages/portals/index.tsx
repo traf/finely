@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { styled } from '@root/stitches.config';
 import { PlusSmIcon } from '@heroicons/react/outline';
 
+// libs
+import { withSessionSsr } from '@lib/iron';
+
 // components
-import { Box } from '@components/core';
-import { PrimaryButton } from '@components/core/Button';
 import { MainLayout } from '@components/layout/MainLayout';
+import { Box, PrimaryButton, H1, H2, H3 } from '@components/core';
 
 const fakePortals = [
   {
@@ -20,20 +22,15 @@ const fakePortals = [
   }
 ];
 
-const PortalItemsList = styled('div', {
-  gap: '$5',
-  display: 'flex',
-  flexDirection: 'column'
-});
-
 const PortalItem = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
   px: '$5',
   py: '$8',
-  gap: '$5',
-  display: 'flex',
-  borderRadius: '8px',
-  flexDirection: 'column',
-  backgroundColor: '#161616',
+  gap: 20,
+  borderRadius: '$sm',
+  backgroundColor: '$offBlack',
+
   '@md': {
     px: '$10',
     flexDirection: 'row',
@@ -41,90 +38,99 @@ const PortalItem = styled('div', {
   }
 });
 
-const PortalItemSection = styled('div', {
+const PortalItemColumn = styled('div', {
   gap: '$4',
   width: '100%',
   display: 'flex',
   flexDirection: 'column'
 });
 
-const PortalItemSectionName = styled('h3', {
-  fontSize: '18px',
-  color: '$accentText'
+const PortalItemColumnTitle = styled(H3, {
+  fontSize: '24px',
+  color: '$offWhite'
 });
 
-const PortalItemSectionContent = styled('div', {
-  width: '100%'
-});
-
-const PortalName = styled('h2', {
-  fontSize: '24px'
-});
-
-const PageTitle = styled('h1', {
-  fontSize: '48px',
-  marginBottom: '$17'
-});
-
-const PortalCopyValueInput = styled('input', {
-  px: '$3',
-  py: '$3',
+const PortalItemInput = styled('input', {
   margin: 0,
+  padding: '$3',
   width: '100%',
   border: 'none',
-  color: '$text',
+  color: '$white',
   fontSize: '14px',
-  fontWeight: '600',
   borderRadius: '8px',
-  backgroundColor: '#222222'
+  fontWeight: 'semibold',
+  backgroundColor: '$border'
 });
 
-const AddPortalIcon = styled(PlusSmIcon, {
-  width: '24px',
-  height: '24px'
-});
-
-export default function () {
+export default function Portals() {
   const [portals, setPortals] = useState(fakePortals);
   return (
     <MainLayout>
-      <Box css={{ maxWidth: '90%', width: '1280px', margin: '60px auto 0' }}>
-        <Box css={{ display: 'flex', justifyContent: 'space-between' }}>
-          <PageTitle>Portals</PageTitle>
-          <PrimaryButton>
-            New Portal <AddPortalIcon />
+      <Box css={{ maxWidth: '90%', width: '1280px', marginTop: 60, mx: 'auto' }}>
+        <Box
+          css={{
+            display: 'flex',
+            marginBottom: 70,
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+          <H1 css={{ fontSize: '48px', marginBottom: 0 }}>Portals</H1>
+          <PrimaryButton css={{ py: '12px' }}>
+            New Portal{' '}
+            <span style={{ width: 24, height: 24 }}>
+              <PlusSmIcon />
+            </span>
           </PrimaryButton>
         </Box>
-        <PortalItemsList>
+        <Box css={{ display: 'flex', flexDirection: 'column', gap: '$10' }}>
           {portals.map((portal) => (
             <PortalItem key={portal.name}>
               {/* Portal name */}
-              <PortalItemSection>
-                <PortalItemSectionName>Name</PortalItemSectionName>
-                <PortalItemSectionContent>
-                  <PortalName>{portal.name}</PortalName>
-                </PortalItemSectionContent>
-              </PortalItemSection>
+              <PortalItemColumn>
+                <PortalItemColumnTitle>Name</PortalItemColumnTitle>
+                <Box css={{ width: '100%' }}>
+                  <H2 css={{ fontSize: '28px' }} className="text-2xl">
+                    {portal.name}
+                  </H2>
+                </Box>
+              </PortalItemColumn>
 
               {/* Portal script */}
-              <PortalItemSection>
-                <PortalItemSectionName>Script</PortalItemSectionName>
-                <PortalItemSectionContent>
-                  <PortalCopyValueInput readOnly={true} value={portal.scriptTag} />
-                </PortalItemSectionContent>
-              </PortalItemSection>
+              <PortalItemColumn>
+                <PortalItemColumnTitle>Script</PortalItemColumnTitle>
+                <Box css={{ width: '100%' }}>
+                  <PortalItemInput readOnly={true} value={portal.scriptTag} />
+                </Box>
+              </PortalItemColumn>
 
               {/* Portal Connect button ID */}
-              <PortalItemSection>
-                <PortalItemSectionName>Connect Button ID</PortalItemSectionName>
-                <PortalItemSectionContent>
-                  <PortalCopyValueInput readOnly={true} value={portal.connectButtonId} />
-                </PortalItemSectionContent>
-              </PortalItemSection>
+              <PortalItemColumn>
+                <PortalItemColumnTitle>Connect Button ID</PortalItemColumnTitle>
+                <Box css={{ width: '100%' }}>
+                  <PortalItemInput readOnly={true} value={portal.connectButtonId} />
+                </Box>
+              </PortalItemColumn>
             </PortalItem>
           ))}
-        </PortalItemsList>
+        </Box>
       </Box>
     </MainLayout>
   );
 }
+
+export const getServerSideProps = withSessionSsr(async function getServerSideProps({ req }) {
+  const user = req.session.siwe;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: true
+      }
+    };
+  }
+
+  return {
+    props: {}
+  };
+});

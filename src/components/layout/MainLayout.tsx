@@ -1,4 +1,4 @@
-import Nav from '@components/Nav';
+import { Nav } from '@components/Nav';
 import { Box } from '@components/core';
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
