@@ -76,6 +76,11 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <section>
+        <div className="container">
+          <h2>Finely in action</h2>
+        </div>
+      </section>
     </div>
   );
 }
