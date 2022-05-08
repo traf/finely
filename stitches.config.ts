@@ -8,6 +8,7 @@ export const stitchesInstance = createStitches({
       grey: '#818892',
       offBlack: '#111',
       black: '#0d0d0d',
+      error: '#b84c4c',
       jetBlack: '#090909',
       darkGrey: '#1b1b1b',
       offWhite: '#f0f0f0'
@@ -62,6 +63,7 @@ export const stitchesInstance = createStitches({
   },
   utils: {
     mx: (value: any) => ({ marginLeft: value, marginRight: value }),
+    mt: (value: any) => ({ marginTop: value }),
     my: (value: any) => ({ marginTop: value, marginBottom: value }),
     px: (value: any) => ({ paddingLeft: value, paddingRight: value }),
     py: (value: any) => ({ paddingTop: value, paddingBottom: value })
@@ -82,7 +84,8 @@ export const lightMode = createTheme('light-mode', {
 export const darkMode = createTheme('dark-mode', {});
 
 export const globalStyles = globalCss({
-  'hmtl, body': { fontFamily: '$body', backgroundColor: '$background', color: '$text' },
+  'hmtl, body': { fontFamily: '$body', backgroundColor: '$black', color: '$white' },
+  a: { color: '$white' },
   '*': {
     margin: 0,
     padding: 0,
