@@ -3,6 +3,7 @@ import { PlayIcon } from '@heroicons/react/solid';
 
 // components
 import { Nav } from '@components/Nav';
+import Footer from '@components/Footer';
 import IconETH from '@components/IconETH';
 
 export default function Home() {
@@ -15,12 +16,8 @@ export default function Home() {
       <section className="hero">
         <h1>Token-gate any website with one line of code</h1>
         <div className="row gap-sm">
-          <button className="button primary">
-            <IconETH /> Get Started
-          </button>
-          <button className="button">
-            <PlayIcon className="icon" /> Play demo
-          </button>
+          <button className="button primary"><span className="invert"><IconETH /></span> Get Started</button>
+          <button className="button"><PlayIcon className="icon" /> Play demo</button>
         </div>
       </section>
       <section>
@@ -72,14 +69,11 @@ export default function Home() {
       </section>
       <section>
         <div className="container">
-          <h2>
-            Token-gate anything
-            <br /> with a simple copy & paste.
-          </h2>
+          <h2>Made to be as easy <br />as copying & pasting.</h2>
           <h4>A script tag adds functionality, with an ID on any button for the connect modal.</h4>
           <div className="row">
             <div className="box">
-              <img src="./code.png" alt="code" style={{ width: '80%' }} />
+              <img src="./code.png" alt="code" style={{ width: '85%' }} />
             </div>
             <div className="box">
               <img src="./button.png" alt="connect" style={{ width: '200px' }} />
@@ -87,11 +81,21 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section>
+      <section className="clipped">
         <div className="container">
-          <h2>Finely in action</h2>
+          <h2>We're currently in beta — <br />Finely Tokens grant access.</h2>
+          <div className="row gap-sm">
+            <a href="https://opensea.io/collection/finely" target="_blank" className="button primary">
+              <img src="./icon-os.svg" alt="opensea" /> View on Opensea
+            </a>
+            <button className="button">
+              <PlayIcon className="icon" /> Watch demo
+            </button>
+          </div>
+          <img src="./dashboard.png" className="dashboard" alt="dashboard" />
         </div>
       </section>
+      <Footer />
     </div>
   );
 }

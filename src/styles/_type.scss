@@ -8,28 +8,28 @@ h2 {
 }
 
 h3 {
-    color: var(--off-black);
     letter-spacing: -2px;
+    color: $off-black;
     font-size: 54px;
 }
 
 h4 {
     letter-spacing: -1px;
-    color: var(--grey);
     font-size: 24px;
+    color: $grey;
 }
 
 p,
 a {
     letter-spacing: -0.6px;
-    color: var(--grey);
     font-size: 18px;
+    color: $grey;
 }
 
 a {
-    transition: var(--transition);
+    transition: $transition;
 
     &:hover {
-        color: var(--white);
+        color: $white;
     }
 }

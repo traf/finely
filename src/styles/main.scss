@@ -1,6 +1,8 @@
 @import 'reset';
+@import 'variables';
 @import 'logo';
 @import 'button';
+@import 'footer';
 @import 'type';
 @import 'nav';
 @import 'hero';
@@ -8,36 +10,18 @@
 @import 'layout';
 @import 'box';
 
-:root {
-  --jet-black: #090909;
-  --black: #0d0d0d;
-  --off-black: #111;
-  --dark-grey: #1b1b1b;
-  --grey: #818892;
-  --white: #fff;
-  --off-white: #f0f0f0;
-  --borders: #222;
-
-  --rounded-sm: 8px;
-  --rounded-md: 12px;
-  --rounded-lg: 20px;
-  --rounded-pill: 100px;
-
-  --transition: all 0.12s ease-in-out;
-}
-
 body {
   font-family: 'Inter', sans-serif;
-  background: var(--black);
-  color: var(--white);
+  background: $black;
   font-weight: bold;
+  color: $white;
 }
 
 .wheel {
   margin: -120px 0;
 
   h3 {
-    color: var(--white);
+    color: $white;
     margin: 8px 0;
 
     &:nth-child(1),
@@ -63,4 +47,10 @@ body {
 
 .video {
   height: 600px;
+}
+
+.dashboard {
+  box-shadow: 0 40px 40px 0 rgba(0, 0, 0, 0.24);
+  margin-bottom: -120px;
+  margin-top: 120px;
 }

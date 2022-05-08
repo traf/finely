@@ -21,6 +21,7 @@ const StyledOverlay = styled(Dialog.Overlay, {
   backgroundColor: 'rgba(0, 0, 0, .5)',
   backdropFilter: 'blur(3px)',
   position: 'fixed',
+  zIndex: '6',
   inset: 0,
   '@media (prefers-reduced-motion: no-preference)': {
     animation: `${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1) forwards`
@@ -33,6 +34,7 @@ const StyledContent = styled(Dialog.Content, {
   borderRadius: 26,
   boxShadow: 'hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px',
   position: 'fixed',
+  zIndex: '8',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',

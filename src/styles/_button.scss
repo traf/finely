@@ -1,18 +1,18 @@
 .button {
-  border-radius: var(--rounded-pill);
-  transition: var(--transition);
-  background: var(--dark-grey);
+  border-radius: $rounded-pill;
+  transition: $transition;
   letter-spacing: -0.5px;
+  background: $dark-grey;
   align-items: center;
-  color: var(--white);
   font-size: 18px;
   padding: 0 24px;
+  color: $white;
   display: flex;
   height: 52px;
   gap: 8px;
 
   &:hover {
-    background: var(--borders);
+    background: lighten($borders, 6%);
   }
 
   &:active {
@@ -22,22 +22,21 @@
 }
 
 .button.primary {
-  background: var(--off-white);
-  color: var(--black);
+  background: darken($white, 8%);
+  color: $black;
 
   &:hover {
-    background: var(--white);
-  }
-
-  img {
-    filter: invert(1);
-    width: 12px;
+    background: $white;
   }
 }
 
 .button.small {
-  border-radius: var(--rounded-sm);
+  border-radius: $rounded-sm;
   font-size: 16px;
   padding: 0 20px;
   height: 44px;
+}
+
+.invert {
+  filter: invert(1);
 }

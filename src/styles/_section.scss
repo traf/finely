@@ -1,4 +1,5 @@
 section {
+    position: relative;
     padding: 120px 0;
     width: 100%;
 
@@ -7,14 +8,18 @@ section {
     }
 
     .box {
-        background: var(--off-black);
+        background: $off-black;
     }
 
     &:nth-child(odd) {
-        background: var(--off-black);
+        background: $off-black;
 
         .box {
-            background: var(--jet-black);
+            background: $jet-black;
         }
     }
+}
+
+section.clipped {
+    overflow: hidden;
 }

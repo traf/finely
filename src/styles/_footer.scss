@@ -1,0 +1,36 @@
+footer {
+    border-top: 1px solid $borders;
+    position: relative;
+    padding: 120px 0;
+    overflow: hidden;
+
+    .container {
+        justify-content: space-between;
+        display: flex;
+    }
+
+    .links {
+        flex-direction: column;
+        align-items: flex-end;
+        display: flex;
+
+        a {
+            font-size: 24px;
+            padding: 8px 0;
+        }
+    }
+
+    .logo-xl {
+        pointer-events: none;
+        position: absolute;
+        opacity: 0.01;
+        left: -150px;
+        top: 80px;
+
+        .logo {
+            img {
+                width: 800px;
+            }
+        }
+    }
+}

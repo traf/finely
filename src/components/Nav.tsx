@@ -17,7 +17,6 @@ import { useMutationSign } from '../queries/useMutationSignIn';
 
 const PortalsLink = styled('a', {
   fontSize: 18,
-  color: '$grey',
   cursor: 'pointer',
   '&hover': { color: '$white' }
 });
@@ -43,6 +42,13 @@ export function Nav() {
   });
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
 
+  const [scroll, setScroll] = useState(false);
+  useEffect(() => {
+    window.addEventListener("scroll", () => {
+      setScroll(window.scrollY > 0);
+    });
+  }, []);
+
   function goToPortals() {
     console.log({ userData, isLoading, isError });
     if (!userData) {
@@ -60,7 +66,7 @@ export function Nav() {
 
   return (
     <>
-      <nav className="nav">
+      <nav className={scroll ? "nav scrolled" : "nav"}>
         <div className="container">
           <Logo />
           <div className="nav-links">

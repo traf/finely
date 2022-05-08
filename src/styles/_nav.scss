@@ -1,8 +1,13 @@
 .nav {
-    background: var(--black);
-    position: absolute;
-    padding: 48px 0;
+    background: rgba($black, 0.9);
+    backdrop-filter: blur(20px);
+    transition: $transition;
+    align-items: center;
+    position: fixed;
+    display: flex;
+    height: 160px;
     width: 100%;
+    z-index: 2;
     left: 0;
     top: 0;
 
@@ -10,6 +15,14 @@
         justify-content: space-between;
         align-items: center;
         display: flex;
+    }
+}
+
+.nav.scrolled {
+    height: 100px;
+
+    .logo {
+        transform: scale(0.9) translateX(-3px);
     }
 }
 

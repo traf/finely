@@ -1,5 +1,5 @@
 .logo {
-    transition: var(--transition);
+    transition: $transition;
 
     &:active {
         transform: scale(0.96);
