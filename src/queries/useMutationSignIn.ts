@@ -1,6 +1,5 @@
 import { SiweMessage } from 'siwe';
-import { useMutation, UseMutationOptions } from 'react-query';
-import { useAccount, useNetwork, useSignMessage } from 'wagmi';
+import { MutationFunction, useMutation, UseMutationOptions } from 'react-query';
 
 import { api } from '@lib/axios';
 
@@ -9,56 +8,22 @@ interface SignInMutationResponse {
   walletAddress: string;
 }
 
-function createMessage({
-  nonce,
-  address,
-  chainId
-}: {
-  nonce: string;
-  address: string;
-  chainId: number;
-}) {
-  return new SiweMessage({
-    nonce,
-    address,
-    chainId,
-    version: '1',
-    domain: window.location.host,
-    uri: window.location.origin,
-    statement: 'Sign in with Ethereum to the app.'
-  });
+interface SignInMutationVariables {
+  message: SiweMessage;
+  signature: string;
 }
 
-export function useMutationSign(options: UseMutationOptions<SignInMutationResponse, Error> = {}) {
-  const { data: accountData, error: accountError } = useAccount();
-  const { activeChain } = useNetwork();
-  const { signMessageAsync } = useSignMessage();
-
-  const chainId = activeChain?.id;
-  const walletAddress = accountData?.address;
-
-  async function fetcher() {
-    const { data: nonceData } = await api({
-      method: 'GET',
-      url: `/auth/nonce`
-    });
-
-    const message = createMessage({ nonce: nonceData.nonce, address: walletAddress, chainId });
-
-    let signature;
-    try {
-      signature = await signMessageAsync({ message: message.prepareMessage() });
-    } catch (error) {
-      throw new Error('Signature is empty');
-    }
-
+export function useMutationSign(
+  options: UseMutationOptions<SignInMutationResponse, Error, SignInMutationVariables> = {}
+) {
+  async function fetcher({ message, signature }: SignInMutationVariables) {
     const res = await api({
       method: 'POST',
       url: `/auth/verify`,
       data: { message, signature }
     });
-    return res.data;
+    return res.data as SignInMutationResponse;
   }
 
-  return useMutation<SignInMutationResponse, Error>(fetcher, options);
+  return useMutation<SignInMutationResponse, Error, SignInMutationVariables>(fetcher, options);
 }

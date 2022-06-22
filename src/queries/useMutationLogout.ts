@@ -1,8 +1,9 @@
-import { useMutation, UseMutationOptions } from 'react-query';
+import { useMutation, UseMutationOptions, useQueryClient } from 'react-query';
 
 import { api } from '@lib/axios';
 
 export function useMutationLogout(options: UseMutationOptions = {}) {
+  const queryClient = useQueryClient();
   async function fetcher() {
     const { data } = await api({
       method: 'DELETE',
@@ -12,5 +13,11 @@ export function useMutationLogout(options: UseMutationOptions = {}) {
     return data;
   }
 
-  return useMutation<{ ok: boolean }, Error>(fetcher, options);
+  return useMutation<{ ok: boolean }, Error>(fetcher, {
+    onSuccess: (...args) => {
+      if (options?.onSuccess) options.onSuccess(...args);
+      queryClient.setQueryData(['useQueryUserData'], null);
+    },
+    ...options
+  });
 }

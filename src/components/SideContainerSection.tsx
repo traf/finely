@@ -1,37 +1,32 @@
-import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { keyframes, styled } from '@root/stitches.config';
+import { motion } from 'framer-motion';
+import { styled } from '@root/stitches.config';
 
 // components
 import { Box } from './core';
 
-const sideContainerOpenAnimation = keyframes({
-  '0%': { opacity: 0, transform: 'translateX(-100%)' },
-  '100%': { opacity: 1, transform: 'translateX(0%)' }
-});
-
-const overlayOpenAnimation = keyframes({
-  '0%': { opacity: 0 },
-  '100%': { opacity: 1 }
-});
-
 const SideContainerOverlay = styled(motion.div, {
-  backgroundColor: 'rgba(0, 0, 0, 0.1)',
-  backdropFilter: 'blur(3px)',
+  top: 0,
+  left: 0,
   width: '100%',
   position: 'absolute',
-  height: '100vh',
-  top: 0,
-  left: 0
+  backdropFilter: 'blur(3px)',
+  backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  '@md': {
+    height: '100vh'
+  }
 });
 
 const SideContainerContent = styled(motion.div, {
   position: 'relative',
   display: 'flex',
-  width: '440px',
+  width: '100%',
   height: '100%',
   overflowY: 'scroll',
   backgroundColor: '$black',
-  borderRight: '1px solid $border'
+  borderRight: '1px solid $border',
+  '@md': {
+    width: '440px'
+  }
 });
 
 export function SideContainerSection({
@@ -44,23 +39,25 @@ export function SideContainerSection({
   return (
     <Box
       css={{
+        top: 0,
+        left: 0,
         width: '100%',
         position: 'absolute',
-        height: '100vh',
-        top: 0,
-        left: 0
+        '@md': {
+          height: '100vh'
+        }
       }}>
       <SideContainerOverlay
         onClick={onClose}
+        exit={{ opacity: 0 }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
       />
       <SideContainerContent
-        initial={{ x: '-100%' }}
         animate={{ x: 0 }}
         exit={{ x: '-100%' }}
+        initial={{ x: '-100%' }}
         transition={{ duration: 0.5 }}>
         {children}
       </SideContainerContent>

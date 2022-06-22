@@ -4,7 +4,7 @@ export const stitchesInstance = createStitches({
   theme: {
     colors: {
       white: '#fff',
-      border: '#222',
+      border: '#1c1c1c',
       grey: '#818892',
       offBlack: '#111',
       black: '#0d0d0d',

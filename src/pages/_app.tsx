@@ -1,9 +1,11 @@
 import type { AppProps } from 'next/app';
-import { Provider as WagmiProvider } from 'wagmi';
+import { WagmiConfig } from 'wagmi';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { RainbowKitProvider, midnightTheme } from '@rainbow-me/rainbowkit';
 
 // styles
 import './../styles/main.scss';
+import '@rainbow-me/rainbowkit/styles.css';
 
 const queryClient = new QueryClient();
 
@@ -11,19 +13,20 @@ const queryClient = new QueryClient();
 import { useThemeMode } from '@hooks/useThemeMode';
 
 // libs
-import { client as wagmiClient } from './../lib/wagmi';
+import { wagmiClient, chains } from './../lib/wagmi';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { themeClassName } = useThemeMode();
-  console.log('themeClassName', themeClassName);
   return (
-    <WagmiProvider client={wagmiClient}>
-      <QueryClientProvider client={queryClient}>
-        <div className={themeClassName}>
-          <Component {...pageProps} />
-        </div>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <WagmiConfig client={wagmiClient}>
+      <RainbowKitProvider chains={chains} theme={midnightTheme()}>
+        <QueryClientProvider client={queryClient}>
+          <div className={themeClassName}>
+            <Component {...pageProps} />
+          </div>
+        </QueryClientProvider>
+      </RainbowKitProvider>
+    </WagmiConfig>
   );
 }
 

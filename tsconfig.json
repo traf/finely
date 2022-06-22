@@ -18,10 +18,12 @@
     "strictNullChecks": false,
     "experimentalDecorators": true,
     "paths": {
-      "@components/*": ["src/components/*"],
-      "@hooks/*": ["src/hooks/*"],
+      "@root/*": ["./*"],
       "@lib/*": ["src/lib/*"],
-      "@root/*": ["./*"]
+      "@hooks/*": ["src/hooks/*"],
+      "@context/*": ["src/context/*"],
+      "@helpers/*": ["src/helpers/*"],
+      "@components/*": ["src/components/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

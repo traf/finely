@@ -1,3 +1,4 @@
+import { Portal, PortalRule } from '@prisma/client';
 import { useForm } from 'react-hook-form';
 import { styled } from '@root/stitches.config';
 
@@ -6,21 +7,29 @@ import { TrashIcon, QuestionMarkCircleIcon } from '@heroicons/react/outline';
 
 // components
 import { Box, Button, H2, Text, Input } from '@components/core';
+import { useMutationCreatePortal } from '../queries/useMutationCreatePortal';
+import { useMutationUpdatePortal } from '../queries/useMutationUpdatePortal';
+import { useMutationDeletePortal } from '../queries/useMutationDeletePortal';
+import { isValidUrl } from '../helpers/isValidUrl';
+import { Loader } from './Loader';
 
 export type FormMode = 'create' | 'edit';
-export type ContractType = 'erc20' | 'erc721' | 'erc1155';
+export type TokenType = 'ERC20' | 'ERC721' | 'ERC1155';
 
-interface CreatePortalProps {
+interface PortalFormProps {
   mode: FormMode;
-  portal?: {
-    id: string;
-    name: string;
-    contractType: ContractType;
-    contractAddress: string;
-    fallbackUrl: string;
-    protectedUrl: string;
-  };
+  portal?: Portal;
+  rules?: PortalRule[];
   onClose: () => void;
+}
+
+interface PortalFormValues {
+  id: string;
+  name: string;
+  tokenType: TokenType;
+  contractAddress: string;
+  fallbackUrl: string;
+  protectedUrl: string;
 }
 
 const Form = styled('form', { width: '100%' });
@@ -30,13 +39,52 @@ const TokenTypeLabel = styled('label', {
   fontWeight: 'bold'
 });
 
-export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
-  const { register, handleSubmit, watch, getValues } = useForm({
-    ...(mode === 'edit' ? { defaultValues: portal } : { defaultValues: { contractType: 'erc20' } })
+export function PortalForm({ portal, rules, mode, onClose }: PortalFormProps) {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    getValues,
+    formState: { errors }
+  } = useForm<PortalFormValues>({
+    ...(mode === 'edit'
+      ? {
+          defaultValues: {
+            id: portal.id,
+            name: portal.name,
+            tokenType: rules[0].tokenType,
+            fallbackUrl: portal.fallbackPageUrl,
+            protectedUrl: portal.protectedPageUrl,
+            contractAddress: rules[0].contractAddress
+          }
+        }
+      : { defaultValues: { tokenType: 'ERC20' } })
   });
 
-  function onSubmit(data: any) {
-    console.log({ submitData: data });
+  const createPortalMutation = useMutationCreatePortal({
+    onSuccess: () => {
+      onClose();
+    }
+  });
+  const updatePortalMutation = useMutationUpdatePortal({
+    onSuccess: () => {
+      onClose();
+    }
+  });
+
+  const deletePortalMutation = useMutationDeletePortal({
+    onSuccess: () => {
+      onClose();
+    }
+  });
+
+  function onSubmit(portal: any) {
+    if (mode === 'create') {
+      createPortalMutation.mutate({ portal });
+      return;
+    }
+
+    updatePortalMutation.mutate({ portal });
   }
 
   return (
@@ -57,6 +105,7 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
           {mode === 'edit' && (
             <Button
               type="button"
+              onClick={() => deletePortalMutation.mutate({ portalId: portal.id })}
               css={{ padding: '12px', backgroundColor: '$border', color: '$error' }}>
               <TrashIcon width={24} height={24} />
             </Button>
@@ -67,12 +116,13 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
             css={{
               width: '100%',
               display: 'flex',
+              position: 'relative',
               flexDirection: 'column'
             }}>
             <Text css={{ fontSize: '16px', color: '$grey', px: '16px' }}>Portal Name</Text>
             <Input
               placeholder="Enter portal name"
-              {...register('name')}
+              {...register('name', { required: true })}
               css={{
                 mt: 20,
                 px: '16px',
@@ -86,6 +136,16 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
                 backgroundColor: '$darkGrey'
               }}
             />
+            <Text
+              css={{
+                left: '16px',
+                bottom: '-24px',
+                fontSize: '14px',
+                color: '#f87171',
+                position: 'absolute'
+              }}>
+              {errors.name?.type === 'required' && `Portal name is required.`}
+            </Text>
           </Box>
         </Box>
         <Box css={{ width: '100%', py: '34px', px: '24px', borderBottom: '1px solid $border' }}>
@@ -93,6 +153,7 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
             css={{
               width: '100%',
               display: 'flex',
+              position: 'relative',
               flexDirection: 'column'
             }}>
             <Box
@@ -103,7 +164,7 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
                 display: 'flex',
                 alignItems: 'center'
               }}>
-              <Text css={{ fontSize: '16px' }}>Contract Type</Text>
+              <Text css={{ fontSize: '16px' }}>Token Type</Text>
               <QuestionMarkCircleIcon width={16} height={16} cursor="pointer" />
             </Box>
             <Box css={{ display: 'flex', gap: '20px', px: '16px', mt: '20px' }}>
@@ -111,14 +172,14 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
                 <Input
                   type="radio"
                   id="erc20"
-                  name="contractType"
-                  value="erc20"
+                  name="tokenType"
+                  value="ERC20"
                   hidden
-                  {...register('contractType')}
+                  {...register('tokenType', { required: true })}
                 />
                 <TokenTypeLabel
                   htmlFor="erc20"
-                  css={{ color: watch('contractType') === 'erc20' ? '$white' : '$grey' }}>
+                  css={{ color: watch('tokenType') === 'ERC20' ? '$white' : '$grey' }}>
                   ERC-20
                 </TokenTypeLabel>
               </Box>
@@ -126,14 +187,14 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
                 <Input
                   type="radio"
                   id="erc721"
-                  name="contractType"
-                  value="erc721"
+                  name="tokenType"
+                  value="ERC721"
                   hidden
-                  {...register('contractType')}
+                  {...register('tokenType', { required: true })}
                 />
                 <TokenTypeLabel
                   htmlFor="erc721"
-                  css={{ color: getValues('contractType') === 'erc721' ? '$white' : '$grey' }}>
+                  css={{ color: getValues('tokenType') === 'ERC721' ? '$white' : '$grey' }}>
                   ERC-721
                 </TokenTypeLabel>
               </Box>
@@ -141,14 +202,14 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
                 <Input
                   type="radio"
                   id="erc1155"
-                  name="contractType"
-                  value="erc1155"
+                  name="tokenType"
+                  value="ERC1155"
                   hidden
-                  {...register('contractType')}
+                  {...register('tokenType', { required: true })}
                 />
                 <TokenTypeLabel
                   htmlFor="erc1155"
-                  css={{ color: getValues('contractType') === 'erc1155' ? '$white' : '$grey' }}>
+                  css={{ color: getValues('tokenType') === 'ERC1155' ? '$white' : '$grey' }}>
                   ERC-1155
                 </TokenTypeLabel>
               </Box>
@@ -160,6 +221,7 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
             css={{
               width: '100%',
               display: 'flex',
+              position: 'relative',
               flexDirection: 'column'
             }}>
             <Box
@@ -175,7 +237,7 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
             </Box>
             <Input
               placeholder="0x8305...37B62"
-              {...register('contractAddress')}
+              {...register('contractAddress', { pattern: /0x[a-fA-F0-9]{40}/g, required: true })}
               css={{
                 mt: 20,
                 px: '16px',
@@ -189,6 +251,17 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
                 backgroundColor: '$darkGrey'
               }}
             />
+            <Text
+              css={{
+                left: '16px',
+                bottom: '-24px',
+                fontSize: '14px',
+                color: '#f87171',
+                position: 'absolute'
+              }}>
+              {errors.contractAddress?.type === 'required' && `Contract address is required.`}
+              {errors.contractAddress?.type === 'pattern' && `Contract address is invalid.`}
+            </Text>
           </Box>
         </Box>
         <Box css={{ width: '100%', py: '34px', px: '24px', borderBottom: '1px solid $border' }}>
@@ -196,6 +269,7 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
             css={{
               width: '100%',
               display: 'flex',
+              position: 'relative',
               flexDirection: 'column'
             }}>
             <Box
@@ -223,10 +297,9 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
                 borderRadius: '$sm',
                 backgroundColor: '$darkGrey'
               }}>
-              <span>https://</span>
               <Input
-                placeholder="domain.com/protected-page"
-                {...register('protectedUrl')}
+                placeholder="https://domain.com/gated-page"
+                {...register('protectedUrl', { validate: isValidUrl, required: true })}
                 css={{
                   width: '100%',
                   border: 'none',
@@ -238,6 +311,18 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
                 }}
               />
             </Box>
+            <Text
+              css={{
+                left: '16px',
+                bottom: '-24px',
+                fontSize: '14px',
+                color: '#f87171',
+                position: 'absolute'
+              }}>
+              {errors.protectedUrl?.type === 'required' && `Provide a gated URL.`}
+              {errors.protectedUrl?.type === 'validate' &&
+                `Invalid URL. It must be a valid https URL.`}
+            </Text>
           </Box>
         </Box>
         <Box css={{ width: '100%', py: '34px', px: '24px', borderBottom: '1px solid $border' }}>
@@ -245,6 +330,7 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
             css={{
               width: '100%',
               display: 'flex',
+              position: 'relative',
               flexDirection: 'column'
             }}>
             <Box
@@ -272,10 +358,9 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
                 borderRadius: '$sm',
                 backgroundColor: '$darkGrey'
               }}>
-              <span>https://</span>
               <Input
                 placeholder="domain.com/protected-page"
-                {...register('fallbackUrl')}
+                {...register('fallbackUrl', { validate: isValidUrl, required: true })}
                 css={{
                   width: '100%',
                   border: 'none',
@@ -287,6 +372,18 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
                 }}
               />
             </Box>
+            <Text
+              css={{
+                left: '16px',
+                bottom: '-24px',
+                fontSize: '14px',
+                color: '#f87171',
+                position: 'absolute'
+              }}>
+              {errors.fallbackUrl?.type === 'required' && `Provide a fallback URL.`}
+              {errors.fallbackUrl?.type === 'validate' &&
+                `Invalid URL. It must be a valid https URL.`}
+            </Text>
           </Box>
         </Box>
         <Box
@@ -297,10 +394,11 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
             gap: '12px',
             width: '100%',
             display: 'flex',
+            alignItems: 'center',
             borderBottom: '1px solid $border'
           }}>
           <Button shape="rounded" type="submit">
-            Create
+            {mode === 'create' ? 'Create' : 'Update'}
           </Button>
           <Button
             type="button"
@@ -310,6 +408,10 @@ export function PortalForm({ portal, mode, onClose }: CreatePortalProps) {
             onClick={onClose}>
             Cancel
           </Button>
+
+          {(createPortalMutation.isLoading ||
+            updatePortalMutation.isLoading ||
+            deletePortalMutation.isLoading) && <Loader />}
         </Box>
       </Box>
     </Form>

@@ -1,7 +1,7 @@
 import { generateNonce } from 'siwe';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { withSessionRoute } from './../../../lib/iron';
+import { withSessionRoute } from '@lib/iron';
 
 async function nonceRoute(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -15,6 +15,6 @@ async function nonceRoute(req: NextApiRequest, res: NextApiResponse) {
       res.setHeader('Allow', ['GET']);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
-};
+}
 
 export default withSessionRoute(nonceRoute);

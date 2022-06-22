@@ -11,6 +11,7 @@ export const Button = styled(BaseButton, {
   fontWeight: 'bold',
   fontFamily: '$body',
   lineHeight: '1',
+  justifyContent: 'center',
   alignItems: 'center',
 
   transition: 'all 0.12s ease-in-out',
@@ -31,7 +32,7 @@ export const Button = styled(BaseButton, {
       },
       secondary: {
         color: '$white',
-        background: '$offBlack'
+        background: '$border'
       }
     },
     size: {

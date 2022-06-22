@@ -1,8 +1,7 @@
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
-import { useAccount, useEnsName } from 'wagmi';
+import { useEnsName } from 'wagmi';
 import { styled } from '@root/stitches.config';
+import React, { useEffect, useState } from 'react';
 
 // icons
 import Logo from './Logo';
@@ -12,8 +11,9 @@ import IconETH from './IconETH';
 import { ConnectWalletModal } from './ConnectWalletModal';
 
 // queries
-import { useQueryUserData } from '../queries/useQueryUserData';
-import { useMutationSign } from '../queries/useMutationSignIn';
+import { truncateAddress } from '../helpers/truncateAddress';
+import { useUserContext } from '../context/UserContext';
+import { ConnectButton } from './ConnectButton';
 
 const PortalsLink = styled('a', {
   fontSize: 18,
@@ -22,41 +22,20 @@ const PortalsLink = styled('a', {
   '&hover': { color: '$white' }
 });
 
-function truncateAddress(address: string) {
-  return address.slice(0, 6) + '...' + address.slice(-4);
-}
-
 export function Nav() {
   const [connectWalletText, setConnectWalletText] = useState('Connect');
-  const { data: userData, isLoading, isError } = useQueryUserData();
-  const { data: accountData } = useAccount();
-  const { data: ensName, isLoading: isENSLoading } = useEnsName({
-    address: accountData?.address
+  const { walletAddress } = useUserContext();
+  const { data: ensName } = useEnsName({
+    address: walletAddress
   });
-  const router = useRouter();
-  const { mutate: logIn } = useMutationSign({
-    onSuccess: ({ ok }) => {
-      if (ok) {
-        router.push('/portals');
-      }
-    }
-  });
+
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
-
-  function goToPortals() {
-    console.log({ userData, isLoading, isError });
-    if (!userData) {
-      return logIn();
-    }
-
-    router.push('/portals');
-  }
 
   useEffect(() => {
     setConnectWalletText(
-      ensName ? ensName : accountData?.address ? truncateAddress(accountData.address) : 'Connect'
+      ensName ? ensName : walletAddress ? truncateAddress(walletAddress) : 'Connect'
     );
-  }, [ensName, accountData?.address]);
+  }, [ensName, walletAddress]);
 
   return (
     <>
@@ -64,11 +43,12 @@ export function Nav() {
         <div className="container">
           <Logo />
           <div className="nav-links">
-            <PortalsLink onClick={goToPortals}>Portals</PortalsLink>
+            <Link href="/account">Portals</Link>
             <Link href="/">Guides</Link>
-            <button className="button small" onClick={() => setIsConnectModalOpen(true)}>
+            <ConnectButton />
+            {/* <button className="button small" onClick={() => setIsConnectModalOpen(true)}>
               <IconETH /> {connectWalletText}
-            </button>
+            </button> */}
           </div>
         </div>
       </nav>

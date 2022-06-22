@@ -8,35 +8,47 @@ generator client {
 }
 
 model Account {
-  id            Int      @id @default(autoincrement())
+  id            String   @id @default(cuid())
   name          String?
   createdAt     DateTime @default(now())
   walletAddress String   @unique
-  portals       Portal[]
-  nonce         String?  
+
+  portals Portal[]
 }
 
 model Portal {
-  id        Int      @id @default(autoincrement())
-  name      String?
-  createdAt DateTime @default(now())
+  id                                String   @id @default(cuid())
+  name                              String?
+  createdAt                         DateTime @default(now())
+  fallbackPageUrl                   String
+  protectedPageUrl                  String
+  connectButtonClassName            String
+  walletAddressPlaceholderClassName String
 
-  account   Account  @relation(fields: [accountId], references: [id])
-  accountId Int      @unique
+  rules PortalRule[]
 
-  connectButtonId String @default("#finely-connect")
-  rules     PortalRule[]
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id])
+
+  @@unique([id, accountId])
 }
 
 model PortalRule {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  tokenIds        String[]
   contractAddress String
-  minBalance      Int @default(0)
-  maxBalance      Int @default(0)
+  tokenIds        String[]
+  tokenType       TokenType
+  minBalance      Int?      @default(0)
+  maxBalance      Int?      @default(0)
 
-  portal Portal    @relation(fields: [portalId], references: [id])
-  portalId Int      @unique
+  portalId String @unique
+  portal   Portal @relation(fields: [portalId], references: [id], onDelete: Cascade)
+}
+
+enum TokenType {
+  ERC20
+  ERC721
+  ERC1155
 }

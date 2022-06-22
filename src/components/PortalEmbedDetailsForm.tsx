@@ -1,3 +1,5 @@
+import copyToClipboard from 'copy-to-clipboard';
+import { Portal } from '@prisma/client';
 import { useForm } from 'react-hook-form';
 import { styled } from '@root/stitches.config';
 
@@ -8,6 +10,7 @@ import { QuestionMarkCircleIcon, DuplicateIcon } from '@heroicons/react/outline'
 import { Box, Button, H2, H3, Input } from '@components/core';
 
 interface CreatePortalProps {
+  portal: Portal;
   onClose: () => void;
 }
 
@@ -46,8 +49,8 @@ const ValueContainer = styled(Box, {
   backgroundColor: '$darkGrey'
 });
 
-export function PortalEmbedDetailsForm({ onClose }: CreatePortalProps) {
-  const { register, handleSubmit, watch, getValues } = useForm({});
+export function PortalEmbedDetailsForm({ portal, onClose }: CreatePortalProps) {
+  const { handleSubmit } = useForm({});
 
   function onSubmit(data: any) {
     console.log({ submitData: data });
@@ -69,7 +72,7 @@ export function PortalEmbedDetailsForm({ onClose }: CreatePortalProps) {
           }}>
           <H2 css={{ fontSize: '36px' }}>Embed Portal</H2>
         </Box>
-        <Box css={{ width: '100%', py: '34px', px: '24px', borderBottom: '1px solid $border' }}>
+        {/* <Box css={{ width: '100%', py: '34px', px: '24px', borderBottom: '1px solid $border' }}>
           <Box
             css={{
               width: '100%',
@@ -120,7 +123,7 @@ export function PortalEmbedDetailsForm({ onClose }: CreatePortalProps) {
               </Box>
             </Box>
           </Box>
-        </Box>
+        </Box> */}
         <PortalValueSection
           css={{ width: '100%', py: '34px', px: '40px', borderBottom: '1px solid $border' }}>
           <Box
@@ -140,11 +143,14 @@ export function PortalEmbedDetailsForm({ onClose }: CreatePortalProps) {
               <QuestionMarkCircleIcon width={16} height={16} cursor="pointer" />
             </Box>
             <Box css={{ display: 'flex', alignItems: 'center', gap: '8px', mt: 20 }}>
-              <ValueContainer>{`<script src="https://finely.co/portal/2pinrp">`}</ValueContainer>
+              <ValueContainer>{`<script src="https://finely.co/portal/${portal.id}"></script>`}</ValueContainer>
               <Button
                 type="button"
                 color="secondary"
-                css={{ padding: '12px', backgroundColor: '$darkGrey' }}>
+                css={{ padding: '12px', backgroundColor: '$darkGrey' }}
+                onClick={() =>
+                  copyToClipboard(`<script src="https://finely.co/portal/${portal.id}"></script>`)
+                }>
                 <DuplicateIcon width={16} height={16} />
               </Button>
             </Box>
@@ -165,15 +171,18 @@ export function PortalEmbedDetailsForm({ onClose }: CreatePortalProps) {
                 display: 'flex',
                 alignItems: 'center'
               }}>
-              <SectionName css={{ fontSize: '16px' }}>Connect Button ID</SectionName>
+              <SectionName css={{ fontSize: '16px' }}>Connect Button</SectionName>
               <QuestionMarkCircleIcon width={16} height={16} cursor="pointer" />
             </Box>
             <Box css={{ display: 'flex', alignItems: 'center', gap: '8px', mt: 20 }}>
-              <ValueContainer css={{ flex: 'initial' }}>{`#finely-connect`}</ValueContainer>
+              <ValueContainer css={{ flex: 'initial' }}>
+                .{portal.connectButtonClassName}
+              </ValueContainer>
               <Button
                 type="button"
                 color="secondary"
-                css={{ padding: '12px', backgroundColor: '$darkGrey' }}>
+                css={{ padding: '12px', backgroundColor: '$darkGrey' }}
+                onClick={() => copyToClipboard(`.${portal.connectButtonClassName}`)}>
                 <DuplicateIcon width={16} height={16} />
               </Button>
             </Box>
@@ -194,15 +203,18 @@ export function PortalEmbedDetailsForm({ onClose }: CreatePortalProps) {
                 display: 'flex',
                 alignItems: 'center'
               }}>
-              <SectionName css={{ fontSize: '16px' }}>ENS/ETH Address</SectionName>
+              <SectionName css={{ fontSize: '16px' }}>ENS/ETH Address Placeholder</SectionName>
               <QuestionMarkCircleIcon width={16} height={16} cursor="pointer" />
             </Box>
             <Box css={{ display: 'flex', alignItems: 'center', gap: '8px', mt: 20 }}>
-              <ValueContainer css={{ flex: 'initial' }}>{`#finely-ens`}</ValueContainer>
+              <ValueContainer css={{ flex: 'initial' }}>
+                .{portal.walletAddressPlaceholderClassName}
+              </ValueContainer>
               <Button
                 type="button"
                 color="secondary"
-                css={{ padding: '12px', backgroundColor: '$darkGrey' }}>
+                css={{ padding: '12px', backgroundColor: '$darkGrey' }}
+                onClick={() => copyToClipboard(`.${portal.walletAddressPlaceholderClassName}`)}>
                 <DuplicateIcon width={16} height={16} />
               </Button>
             </Box>
