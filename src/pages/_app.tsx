@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { RainbowKitProvider, midnightTheme } from '@rainbow-me/rainbowkit';
 
 // styles
-import './../styles/main.scss';
+// import './../styles/main.scss';
 import '@rainbow-me/rainbowkit/styles.css';
 
 const queryClient = new QueryClient();

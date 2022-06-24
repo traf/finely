@@ -1,30 +1,41 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 model Account {
-  id            String   @id @default(cuid())
-  name          String?
-  createdAt     DateTime @default(now())
-  walletAddress String   @unique
+  id            String @id @default(cuid())
+  walletAddress String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   portals Portal[]
 }
 
 model Portal {
-  id                                String   @id @default(cuid())
-  name                              String?
-  createdAt                         DateTime @default(now())
-  fallbackPageUrl                   String
-  protectedPageUrl                  String
+  id String @id @default(cuid())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // fields
+  name                              String
+  mode                              PortalMode @default(REGULAR)
+  secretKey                         String?
+  redirectUrl                       String?
+  fallbackPageUrl                   String?
+  protectedPageUrl                  String?
   connectButtonClassName            String
   walletAddressPlaceholderClassName String
 
+  // relations
   rules PortalRule[]
 
   accountId String
@@ -34,21 +45,40 @@ model Portal {
 }
 
 model PortalRule {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+  id String @id @default(cuid())
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // fields
   contractAddress String
-  tokenIds        String[]
   tokenType       TokenType
   minBalance      Int?      @default(0)
   maxBalance      Int?      @default(0)
 
+  // relations
+  tokenIds PortalRuleTokenId[]
+
   portalId String @unique
   portal   Portal @relation(fields: [portalId], references: [id], onDelete: Cascade)
+}
+
+model PortalRuleTokenId {
+  id      String @id @default(cuid())
+  tokenId String
+
+  // relations
+  portalRuleId String     @unique
+  portalRule   PortalRule @relation(fields: [portalRuleId], references: [id], onDelete: Cascade)
 }
 
 enum TokenType {
   ERC20
   ERC721
   ERC1155
+}
+
+enum PortalMode {
+  REGULAR
+  ADVANCED
 }

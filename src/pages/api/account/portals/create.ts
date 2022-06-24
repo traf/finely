@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import * as bcrypt from 'bcrypt';
+import { randomBytes } from 'crypto';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@lib/prisma';
@@ -11,8 +13,10 @@ const createPortalSchema = z.object({
     tokenType: z.enum(['ERC20', 'ERC721', 'ERC1155'], {
       errorMap: () => ({ message: 'Invalid token type' })
     }),
-    fallbackUrl: z.string().url('Invalid fallback URL'),
-    protectedUrl: z.string().url('Invalid gated URL'),
+    mode: z.enum(['ADVANCED', 'REGULAR']),
+    fallbackUrl: z.string().url('Invalid fallback URL').optional(),
+    protectedUrl: z.string().url('Invalid gated URL').optional(),
+    redirectUrl: z.string().url('Invalid redirect URL').optional(),
     contractAddress: z.string().regex(/0x[a-fA-F0-9]{40}/g)
   })
 });
@@ -47,25 +51,31 @@ async function createPortal(req: NextApiRequest, res: NextApiResponse) {
         return res.status(404).json({ message: 'Acccount not Found' });
       }
 
+      // generate a secret key to be used to authenticate request to the api
+      // const secretKey = randomBytes(32).toString('hex').toUpperCase();
+      // const hashedSecret = await bcrypt.hash(secretKey, 10);
+
       // create the portal
       const data = createPortalSchemaValidation.data;
       const portal = await prisma.portal.create({
         data: {
           name: data.portal.name,
+          mode: data.portal.mode,
           account: {
             connect: {
               id: account.id
             }
           },
-          fallbackPageUrl: data.portal.fallbackUrl,
-          protectedPageUrl: data.portal.protectedUrl,
+          redirectUrl: data.portal.redirectUrl || '',
+          fallbackPageUrl: data.portal.fallbackUrl || '',
+          protectedPageUrl: data.portal.protectedUrl || '',
           connectButtonClassName: 'fnly-connect',
           walletAddressPlaceholderClassName: 'fnly-wallet-placeholder',
           rules: {
             create: [
               {
                 tokenType: data.portal.tokenType,
-                contractAddress: data.portal.contractAddress
+                contractAddress: data.portal?.contractAddress?.toLowerCase()
               }
             ]
           }

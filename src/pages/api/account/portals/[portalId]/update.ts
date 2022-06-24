@@ -11,9 +11,11 @@ const updatePortalSchema = z.object({
     tokenType: z.enum(['ERC20', 'ERC721', 'ERC1155'], {
       errorMap: () => ({ message: 'Invalid token type' })
     }),
-    fallbackUrl: z.string().url('Invalid fallback URL'),
-    protectedUrl: z.string().url('Invalid gated URL'),
-    contractAddress: z.string().regex(/0x[a-fA-F0-9]{40}/g)
+    mode: z.enum(['ADVANCED', 'REGULAR']),
+    contractAddress: z.string().regex(/0x[a-fA-F0-9]{40}/g),
+    fallbackUrl: z.string().url('Invalid fallback URL').optional(),
+    protectedUrl: z.string().url('Invalid gated URL').optional(),
+    redirectUrl: z.string().url('Invalid redirect URL').optional()
   })
 });
 
@@ -60,6 +62,8 @@ async function updatePortal(req: NextApiRequest, res: NextApiResponse) {
         },
         data: {
           name: data.portal.name,
+          mode: data.portal.mode,
+          redirectUrl: data.portal.redirectUrl,
           fallbackPageUrl: data.portal.fallbackUrl,
           protectedPageUrl: data.portal.protectedUrl
         }
@@ -71,7 +75,7 @@ async function updatePortal(req: NextApiRequest, res: NextApiResponse) {
         },
         data: {
           tokenType: data.portal.tokenType,
-          contractAddress: data.portal.contractAddress
+          contractAddress: data.portal?.contractAddress.toLowerCase()
         }
       });
 

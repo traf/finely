@@ -30,6 +30,7 @@ async function deletePortal(req: NextApiRequest, res: NextApiResponse) {
         }
       });
 
+      // delete the portal
       await prisma.portal.delete({
         where: {
           id_accountId: {

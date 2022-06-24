@@ -23,19 +23,19 @@ const PortalsLink = styled('a', {
 });
 
 export function Nav() {
-  const [connectWalletText, setConnectWalletText] = useState('Connect');
+  // const [connectWalletText, setConnectWalletText] = useState('Connect');
   const { walletAddress } = useUserContext();
   const { data: ensName } = useEnsName({
     address: walletAddress
   });
 
-  const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
+  // const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
 
-  useEffect(() => {
-    setConnectWalletText(
-      ensName ? ensName : walletAddress ? truncateAddress(walletAddress) : 'Connect'
-    );
-  }, [ensName, walletAddress]);
+  // useEffect(() => {
+  //   setConnectWalletText(
+  //     ensName ? ensName : walletAddress ? truncateAddress(walletAddress) : 'Connect'
+  //   );
+  // }, [ensName, walletAddress]);
 
   return (
     <>
@@ -52,7 +52,7 @@ export function Nav() {
           </div>
         </div>
       </nav>
-      <ConnectWalletModal open={isConnectModalOpen} onClose={() => setIsConnectModalOpen(false)} />
+      {/* <ConnectWalletModal open={isConnectModalOpen} onClose={() => setIsConnectModalOpen(false)} /> */}
     </>
   );
 }

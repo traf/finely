@@ -1,6 +1,7 @@
-import { Portal, PortalRule } from '@prisma/client';
+import { Portal, PortalMode, PortalRule } from '@prisma/client';
 import { useForm } from 'react-hook-form';
 import { styled } from '@root/stitches.config';
+import * as SwitchPrimitive from '@radix-ui/react-switch';
 
 // icons
 import { TrashIcon, QuestionMarkCircleIcon } from '@heroicons/react/outline';
@@ -12,6 +13,7 @@ import { useMutationUpdatePortal } from '../queries/useMutationUpdatePortal';
 import { useMutationDeletePortal } from '../queries/useMutationDeletePortal';
 import { isValidUrl } from '../helpers/isValidUrl';
 import { Loader } from './Loader';
+import { useEffect, useState } from 'react';
 
 export type FormMode = 'create' | 'edit';
 export type TokenType = 'ERC20' | 'ERC721' | 'ERC1155';
@@ -26,40 +28,120 @@ interface PortalFormProps {
 interface PortalFormValues {
   id: string;
   name: string;
-  tokenType: TokenType;
-  contractAddress: string;
+  redirectUrl: string;
   fallbackUrl: string;
   protectedUrl: string;
+  mode: PortalMode;
+  tokenType: TokenType;
+  contractAddress: string;
 }
 
 const Form = styled('form', { width: '100%' });
+
+const FormSection = styled(Box, {
+  py: '34px',
+  px: '24px',
+  width: '100%',
+  display: 'flex',
+  position: 'relative',
+  flexDirection: 'column',
+  borderBottom: '1px solid $border'
+});
+
+const FormLabel = styled(Text, {
+  color: '$grey',
+  fontSize: '16px',
+  fontWeight: '$bold'
+});
+
+const FormTextValueInput = styled(Input, {
+  px: 16,
+  py: 20,
+  border: 'none',
+  outline: 'none',
+  color: '$white',
+  fontSize: 18,
+  fontWeight: 'bold',
+  borderRadius: '$sm',
+  backgroundColor: '$darkGrey'
+});
+
+const FormErrorText = styled(Text, {
+  left: 36,
+  bottom: 10,
+  fontSize: '14px',
+  color: '#f87171',
+  position: 'absolute'
+});
 
 const TokenTypeLabel = styled('label', {
   cursor: 'pointer',
   fontWeight: 'bold'
 });
 
+const SwitchContainer = styled(SwitchPrimitive.Root, {
+  all: 'unset',
+  width: 42,
+  height: 25,
+  backgroundColor: '$darkGrey',
+  borderRadius: '9999px',
+  position: 'relative',
+  // boxShadow: `0 2px 10px ${blackA.blackA7}`,
+  WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
+  '&:focus': { boxShadow: `0 0 0 2px black` },
+  '&[data-state="checked"]': { backgroundColor: '$success' }
+});
+
+const SwitchThumb = styled(SwitchPrimitive.Thumb, {
+  display: 'block',
+  width: 21,
+  height: 21,
+  backgroundColor: '$white',
+  borderRadius: '9999px',
+  transition: 'transform 100ms',
+  transform: 'translateX(2px)',
+  willChange: 'transform',
+  '&[data-state="checked"]': { transform: 'translateX(19px)' }
+});
+
+function getDefaultValues({
+  portal,
+  rules,
+  mode
+}: {
+  portal: Portal;
+  rules: PortalRule[];
+  mode: FormMode;
+}): Partial<PortalFormValues> {
+  if (mode === 'create') {
+    return { tokenType: 'ERC20', mode: PortalMode.REGULAR };
+  }
+
+  return {
+    id: portal.id,
+    name: portal.name,
+    mode: portal.mode,
+    tokenType: rules[0].tokenType,
+    redirectUrl: portal.redirectUrl || null,
+    fallbackUrl: portal.fallbackPageUrl || null,
+    protectedUrl: portal.protectedPageUrl || null,
+    contractAddress: rules[0].contractAddress
+  };
+}
+
 export function PortalForm({ portal, rules, mode, onClose }: PortalFormProps) {
+  const defaultValues = getDefaultValues({ portal, rules, mode });
   const {
-    register,
-    handleSubmit,
     watch,
+    setValue,
+    register,
     getValues,
+    unregister,
+    handleSubmit,
     formState: { errors }
-  } = useForm<PortalFormValues>({
-    ...(mode === 'edit'
-      ? {
-          defaultValues: {
-            id: portal.id,
-            name: portal.name,
-            tokenType: rules[0].tokenType,
-            fallbackUrl: portal.fallbackPageUrl,
-            protectedUrl: portal.protectedPageUrl,
-            contractAddress: rules[0].contractAddress
-          }
-        }
-      : { defaultValues: { tokenType: 'ERC20' } })
-  });
+  } = useForm<PortalFormValues>({ defaultValues, shouldUnregister: true });
+  const portalId = watch('id');
+  const portalMode = watch('mode');
 
   const createPortalMutation = useMutationCreatePortal({
     onSuccess: () => {
@@ -87,6 +169,20 @@ export function PortalForm({ portal, rules, mode, onClose }: PortalFormProps) {
     updatePortalMutation.mutate({ portal });
   }
 
+  useEffect(() => {
+    register('mode', { required: true });
+  }, [register]);
+
+  useEffect(() => {
+    if (portalMode === PortalMode.ADVANCED) {
+      unregister('protectedUrl');
+      unregister('fallbackUrl');
+      return;
+    }
+
+    unregister('redirectUrl');
+  }, [portalMode]);
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Box css={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -111,281 +207,200 @@ export function PortalForm({ portal, rules, mode, onClose }: PortalFormProps) {
             </Button>
           )}
         </Box>
-        <Box css={{ width: '100%', py: '34px', px: '24px', borderBottom: '1px solid $border' }}>
+        {mode === 'edit' && portalId && (
+          <Input type="hidden" {...register('id', { required: true })} />
+        )}
+        <FormSection>
+          <FormLabel>Portal Name</FormLabel>
+          <FormTextValueInput
+            css={{ mt: 20 }}
+            placeholder="Enter portal name"
+            {...register('name', { required: true })}
+          />
+          <FormErrorText>
+            {errors.name?.type === 'required' && `Portal name is required.`}
+          </FormErrorText>
+        </FormSection>
+        <FormSection>
           <Box
             css={{
-              width: '100%',
+              gap: '8px',
+              px: '16px',
+              color: '$grey',
               display: 'flex',
-              position: 'relative',
-              flexDirection: 'column'
+              alignItems: 'center'
             }}>
-            <Text css={{ fontSize: '16px', color: '$grey', px: '16px' }}>Portal Name</Text>
-            <Input
-              placeholder="Enter portal name"
-              {...register('name', { required: true })}
-              css={{
-                mt: 20,
-                px: '16px',
-                py: '20px',
-                border: 'none',
-                outline: 'none',
-                color: '$white',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                borderRadius: '$sm',
-                backgroundColor: '$darkGrey'
-              }}
-            />
-            <Text
-              css={{
-                left: '16px',
-                bottom: '-24px',
-                fontSize: '14px',
-                color: '#f87171',
-                position: 'absolute'
-              }}>
-              {errors.name?.type === 'required' && `Portal name is required.`}
-            </Text>
+            <FormLabel>Token Type</FormLabel>
+            <QuestionMarkCircleIcon width={16} height={16} cursor="pointer" />
           </Box>
-        </Box>
-        <Box css={{ width: '100%', py: '34px', px: '24px', borderBottom: '1px solid $border' }}>
-          <Box
-            css={{
-              width: '100%',
-              display: 'flex',
-              position: 'relative',
-              flexDirection: 'column'
-            }}>
-            <Box
-              css={{
-                gap: '8px',
-                px: '16px',
-                color: '$grey',
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-              <Text css={{ fontSize: '16px' }}>Token Type</Text>
-              <QuestionMarkCircleIcon width={16} height={16} cursor="pointer" />
-            </Box>
-            <Box css={{ display: 'flex', gap: '20px', px: '16px', mt: '20px' }}>
-              <Box>
-                <Input
-                  type="radio"
-                  id="erc20"
-                  name="tokenType"
-                  value="ERC20"
-                  hidden
-                  {...register('tokenType', { required: true })}
-                />
-                <TokenTypeLabel
-                  htmlFor="erc20"
-                  css={{ color: watch('tokenType') === 'ERC20' ? '$white' : '$grey' }}>
-                  ERC-20
-                </TokenTypeLabel>
-              </Box>
-              <Box>
-                <Input
-                  type="radio"
-                  id="erc721"
-                  name="tokenType"
-                  value="ERC721"
-                  hidden
-                  {...register('tokenType', { required: true })}
-                />
-                <TokenTypeLabel
-                  htmlFor="erc721"
-                  css={{ color: getValues('tokenType') === 'ERC721' ? '$white' : '$grey' }}>
-                  ERC-721
-                </TokenTypeLabel>
-              </Box>
-              <Box>
-                <Input
-                  type="radio"
-                  id="erc1155"
-                  name="tokenType"
-                  value="ERC1155"
-                  hidden
-                  {...register('tokenType', { required: true })}
-                />
-                <TokenTypeLabel
-                  htmlFor="erc1155"
-                  css={{ color: getValues('tokenType') === 'ERC1155' ? '$white' : '$grey' }}>
-                  ERC-1155
-                </TokenTypeLabel>
-              </Box>
-            </Box>
-          </Box>
-        </Box>
-        <Box css={{ width: '100%', py: '34px', px: '24px', borderBottom: '1px solid $border' }}>
-          <Box
-            css={{
-              width: '100%',
-              display: 'flex',
-              position: 'relative',
-              flexDirection: 'column'
-            }}>
-            <Box
-              css={{
-                gap: '8px',
-                px: '16px',
-                color: '$grey',
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-              <Text css={{ fontSize: '16px' }}>Token Contract Address</Text>
-              <QuestionMarkCircleIcon width={16} height={16} cursor="pointer" />
-            </Box>
-            <Input
-              placeholder="0x8305...37B62"
-              {...register('contractAddress', { pattern: /0x[a-fA-F0-9]{40}/g, required: true })}
-              css={{
-                mt: 20,
-                px: '16px',
-                py: '20px',
-                border: 'none',
-                outline: 'none',
-                color: '$white',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                borderRadius: '$sm',
-                backgroundColor: '$darkGrey'
-              }}
-            />
-            <Text
-              css={{
-                left: '16px',
-                bottom: '-24px',
-                fontSize: '14px',
-                color: '#f87171',
-                position: 'absolute'
-              }}>
-              {errors.contractAddress?.type === 'required' && `Contract address is required.`}
-              {errors.contractAddress?.type === 'pattern' && `Contract address is invalid.`}
-            </Text>
-          </Box>
-        </Box>
-        <Box css={{ width: '100%', py: '34px', px: '24px', borderBottom: '1px solid $border' }}>
-          <Box
-            css={{
-              width: '100%',
-              display: 'flex',
-              position: 'relative',
-              flexDirection: 'column'
-            }}>
-            <Box
-              css={{
-                gap: '8px',
-                px: '16px',
-                color: '$grey',
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-              <Text css={{ fontSize: '16px' }}>Gated URL</Text>
-              <QuestionMarkCircleIcon width={16} height={16} cursor="pointer" />
-            </Box>
-            <Box
-              css={{
-                mt: 20,
-                px: '16px',
-                py: '20px',
-                display: 'flex',
-                border: 'none',
-                outline: 'none',
-                color: '$white',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                borderRadius: '$sm',
-                backgroundColor: '$darkGrey'
-              }}>
+          <Box css={{ display: 'flex', gap: '20px', px: '16px', mt: '20px' }}>
+            <Box>
               <Input
+                type="radio"
+                id="erc20"
+                name="tokenType"
+                value="ERC20"
+                hidden
+                {...register('tokenType', { required: true })}
+              />
+              <TokenTypeLabel
+                htmlFor="erc20"
+                css={{ color: watch('tokenType') === 'ERC20' ? '$white' : '$grey' }}>
+                ERC-20
+              </TokenTypeLabel>
+            </Box>
+            <Box>
+              <Input
+                type="radio"
+                id="erc721"
+                name="tokenType"
+                value="ERC721"
+                hidden
+                {...register('tokenType', { required: true })}
+              />
+              <TokenTypeLabel
+                htmlFor="erc721"
+                css={{ color: getValues('tokenType') === 'ERC721' ? '$white' : '$grey' }}>
+                ERC-721
+              </TokenTypeLabel>
+            </Box>
+            <Box>
+              <Input
+                type="radio"
+                id="erc1155"
+                name="tokenType"
+                value="ERC1155"
+                hidden
+                {...register('tokenType', { required: true })}
+              />
+              <TokenTypeLabel
+                htmlFor="erc1155"
+                css={{ color: getValues('tokenType') === 'ERC1155' ? '$white' : '$grey' }}>
+                ERC-1155
+              </TokenTypeLabel>
+            </Box>
+          </Box>
+        </FormSection>
+        <FormSection>
+          <Box
+            css={{
+              gap: '8px',
+              px: '16px',
+              color: '$grey',
+              display: 'flex',
+              alignItems: 'center'
+            }}>
+            <FormLabel>Token Contract Address</FormLabel>
+            <QuestionMarkCircleIcon width={16} height={16} cursor="pointer" />
+          </Box>
+          <FormTextValueInput
+            css={{ mt: 20 }}
+            placeholder="0x8305...37B62"
+            {...register('contractAddress', { pattern: /0x[a-fA-F0-9]{40}/g, required: true })}
+          />
+          <FormErrorText>
+            {errors.contractAddress?.type === 'required' && `Contract address is required.`}
+            {errors.contractAddress?.type === 'pattern' && `Contract address is invalid.`}
+          </FormErrorText>
+        </FormSection>
+        <FormSection css={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+          <Box
+            css={{
+              gap: '8px',
+              px: '16px',
+              color: '$grey',
+              display: 'flex',
+              alignItems: 'center'
+            }}>
+            <FormLabel>Enable Server Side Gating</FormLabel>
+            <QuestionMarkCircleIcon width={16} height={16} cursor="pointer" />
+          </Box>
+          <SwitchContainer
+            value={portalMode}
+            checked={portalMode === PortalMode.ADVANCED}
+            onCheckedChange={(checked) =>
+              setValue('mode', checked ? PortalMode.ADVANCED : PortalMode.REGULAR)
+            }>
+            <SwitchThumb />
+          </SwitchContainer>
+        </FormSection>
+        {portalMode === PortalMode.ADVANCED && (
+          <FormSection>
+            <Box
+              css={{
+                gap: '8px',
+                px: '16px',
+                color: '$grey',
+                display: 'flex',
+                alignItems: 'center'
+              }}>
+              <FormLabel>Redirect URL</FormLabel>
+              <QuestionMarkCircleIcon width={16} height={16} cursor="pointer" />
+            </Box>
+            <FormTextValueInput
+              css={{ mt: 20 }}
+              placeholder="https://domain.com/authenticate"
+              {...register('redirectUrl', { validate: isValidUrl, required: true })}
+            />
+            <FormErrorText>
+              {errors.redirectUrl?.type === 'required' && `Provide a redirect URL.`}
+              {errors.redirectUrl?.type === 'validate' &&
+                `Invalid URL. It must be a valid https URL.`}
+            </FormErrorText>
+          </FormSection>
+        )}
+
+        {portalMode === PortalMode.REGULAR && (
+          <>
+            <FormSection>
+              <Box
+                css={{
+                  gap: '8px',
+                  px: '16px',
+                  color: '$grey',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}>
+                <FormLabel>Gated URL</FormLabel>
+                <QuestionMarkCircleIcon width={16} height={16} cursor="pointer" />
+              </Box>
+              <FormTextValueInput
+                css={{ mt: 20 }}
                 placeholder="https://domain.com/gated-page"
                 {...register('protectedUrl', { validate: isValidUrl, required: true })}
-                css={{
-                  width: '100%',
-                  border: 'none',
-                  outline: 'none',
-                  color: '$white',
-                  fontSize: '18px',
-                  fontWeight: 'bold',
-                  backgroundColor: 'transparent'
-                }}
               />
-            </Box>
-            <Text
-              css={{
-                left: '16px',
-                bottom: '-24px',
-                fontSize: '14px',
-                color: '#f87171',
-                position: 'absolute'
-              }}>
-              {errors.protectedUrl?.type === 'required' && `Provide a gated URL.`}
-              {errors.protectedUrl?.type === 'validate' &&
-                `Invalid URL. It must be a valid https URL.`}
-            </Text>
-          </Box>
-        </Box>
-        <Box css={{ width: '100%', py: '34px', px: '24px', borderBottom: '1px solid $border' }}>
-          <Box
-            css={{
-              width: '100%',
-              display: 'flex',
-              position: 'relative',
-              flexDirection: 'column'
-            }}>
-            <Box
-              css={{
-                gap: '8px',
-                px: '16px',
-                color: '$grey',
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-              <Text css={{ fontSize: '16px' }}>Unauthorized Access URL Redirect</Text>
-              <QuestionMarkCircleIcon width={16} height={16} cursor="pointer" />
-            </Box>
-            <Box
-              css={{
-                mt: 20,
-                px: '16px',
-                py: '20px',
-                display: 'flex',
-                border: 'none',
-                outline: 'none',
-                color: '$white',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                borderRadius: '$sm',
-                backgroundColor: '$darkGrey'
-              }}>
-              <Input
+              <FormErrorText>
+                {errors.protectedUrl?.type === 'required' && `Provide a gated URL.`}
+                {errors.protectedUrl?.type === 'validate' &&
+                  `Invalid URL. It must be a valid https URL.`}
+              </FormErrorText>
+            </FormSection>
+            <FormSection>
+              <Box
+                css={{
+                  gap: '8px',
+                  px: '16px',
+                  color: '$grey',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}>
+                <FormLabel>Unauthorized Access URL Redirect</FormLabel>
+                <QuestionMarkCircleIcon width={16} height={16} cursor="pointer" />
+              </Box>
+              <FormTextValueInput
+                css={{ mt: 20 }}
                 placeholder="domain.com/protected-page"
                 {...register('fallbackUrl', { validate: isValidUrl, required: true })}
-                css={{
-                  width: '100%',
-                  border: 'none',
-                  outline: 'none',
-                  color: '$white',
-                  fontSize: '18px',
-                  fontWeight: 'bold',
-                  backgroundColor: 'transparent'
-                }}
               />
-            </Box>
-            <Text
-              css={{
-                left: '16px',
-                bottom: '-24px',
-                fontSize: '14px',
-                color: '#f87171',
-                position: 'absolute'
-              }}>
-              {errors.fallbackUrl?.type === 'required' && `Provide a fallback URL.`}
-              {errors.fallbackUrl?.type === 'validate' &&
-                `Invalid URL. It must be a valid https URL.`}
-            </Text>
-          </Box>
-        </Box>
+              <FormErrorText>
+                {errors.fallbackUrl?.type === 'required' && `Provide a fallback URL.`}
+                {errors.fallbackUrl?.type === 'validate' &&
+                  `Invalid URL. It must be a valid https URL.`}
+              </FormErrorText>
+            </FormSection>
+          </>
+        )}
+
         <Box
           css={{
             py: '34px',

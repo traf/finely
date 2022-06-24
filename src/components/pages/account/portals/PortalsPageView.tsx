@@ -16,15 +16,15 @@ import { PortalEmbedDetailsForm } from '@components/PortalEmbedDetailsForm';
 
 const PortalItem = styled('div', {
   gap: 20,
-  px: '$5',
-  py: '$8',
+  px: '20px',
+  py: '32px',
   width: '100%',
   display: 'flex',
   borderRadius: '$sm',
   flexDirection: 'column',
   backgroundColor: '$offBlack',
   '@md': {
-    px: '$10',
+    px: '40px',
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between'

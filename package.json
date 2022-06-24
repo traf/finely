@@ -7,18 +7,20 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:start": "docker run --rm -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DATABASE=postgres -p 5432:5432 postgres:14.2",
-    "db:generate": "prisma generate --schema=src/lib/prisma/schema.prisma",
-    "db:migrate": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/finely npx prisma migrate deploy --schema=src/lib/prisma/schema.prisma"
+    "db:start": "pscale connect finely staging --port 3309",
+    "db:generate": "npx prisma generate --schema=src/lib/prisma/schema.prisma",
+    "db:push": "env $(cat .env.local | xargs) npx prisma db push --schema=src/lib/prisma/schema.prisma"
   },
   "dependencies": {
     "@heroicons/react": "^1.0.6",
     "@mdx-js/react": "^2.1.1",
     "@prisma/client": "^3.12.0",
     "@radix-ui/react-dialog": "^0.1.7",
+    "@radix-ui/react-switch": "^0.1.5",
     "@rainbow-me/rainbowkit": "^0.2.3",
     "@stitches/react": "^1.2.7",
     "axios": "^0.26.1",
+    "bcrypt": "^5.0.1",
     "copy-to-clipboard": "^3.3.1",
     "cors": "^2.8.5",
     "ethers": "^5.6.8",
@@ -34,6 +36,7 @@
     "zod": "^3.17.3"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.12",
     "@types/node": "17.0.24",
     "@types/react": "18.0.5",
