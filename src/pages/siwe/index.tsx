@@ -116,12 +116,7 @@ export default function SignInWithWallet() {
   });
 
   const [error, setError] = useState<string>(null);
-  const [authState, setAuthState] = useState({
-    code: null,
-    error: null,
-    address: null,
-    loading: false
-  });
+  const [isConnecting, setIsConnecting] = useState(false);
 
   async function signIn() {
     try {
@@ -130,7 +125,8 @@ export default function SignInWithWallet() {
 
       if (!address || !chainId || !activeConnector) return;
 
-      setAuthState((x) => ({ ...x, error: null, loading: true }));
+      setError(null);
+      setIsConnecting(true);
 
       const nonce = await fetchNonce();
       const message = createSignatureMessage({
@@ -150,7 +146,8 @@ export default function SignInWithWallet() {
       });
       router.push(`/api/siwe/verify?${queryParams}`);
     } catch (error) {
-      setAuthState((x) => ({ ...x, error, loading: false }));
+      setError(`We couldn't connect your wallet, please try again.`);
+      setIsConnecting(false);
     }
   }
 
@@ -160,23 +157,14 @@ export default function SignInWithWallet() {
       signIn();
     }
   }, [
-    setAuthState,
+    setError,
+    setIsConnecting,
     activeConnector,
     activeChain?.id,
     signMessageAsync,
     accountData?.address,
     previousWalletAddress
   ]);
-
-  useEffect(() => {
-    if (portalDataError) {
-      setError('Portal not found.');
-    }
-
-    if (authState.error) {
-      setError(`We couldn't connect your wallet, please try again.`);
-    }
-  }, [authState.error, portalDataError]);
 
   useEffect(() => {
     if (!portalId) {
@@ -215,7 +203,7 @@ export default function SignInWithWallet() {
             </Box>
           )}
 
-          {!isLoadingPortalData && error && (
+          {!isLoadingPortalData && portalDataError && (
             <Box
               css={{
                 width: '100%',
@@ -223,11 +211,11 @@ export default function SignInWithWallet() {
                 textAlign: 'center',
                 flexDirection: 'column'
               }}>
-              <Paragraph>{error}</Paragraph>
+              <Paragraph>Portal not found.</Paragraph>
             </Box>
           )}
 
-          {!isLoadingPortalData && portalData && !error && (
+          {!isLoadingPortalData && !portalDataError && portalData && (
             <Box
               css={{
                 width: '100%',
@@ -239,7 +227,10 @@ export default function SignInWithWallet() {
               <Paragraph css={{ marginBottom: 16 }}>
                 {portalData.portal.name} is requesting to connect your wallet.{' '}
               </Paragraph>
-              <ConnectButton onSignMessage={() => signIn()} isSigningIn={authState?.loading} />
+              <ConnectButton onSignMessage={() => signIn()} isSigningIn={isConnecting} />
+              {error && (
+                <Paragraph css={{ mt: 16, fontSize: 14, color: '$error' }}>{error}</Paragraph>
+              )}
             </Box>
           )}
         </Box>
