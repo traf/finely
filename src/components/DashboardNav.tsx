@@ -160,8 +160,8 @@ export function DashboardNav() {
           </NavList>
         </Box>
         <Box css={{ mt: 'auto' }}>
-          <Link href="/account" passHref>
-            <NavLink color={router.pathname === '/account' ? 'active' : 'deactivate'}>
+          <Link href="/" passHref>
+            <NavLink color={router.pathname === '/' ? 'active' : 'deactivate'}>
               {ensOrAddress}
             </NavLink>
           </Link>
@@ -224,8 +224,8 @@ export function DashboardNav() {
                 </NavList>
               </Box>
               <Box css={{ mt: '40px' }}>
-                <Link href="/account" passHref>
-                  <NavLink color={router.pathname === '/account' ? 'active' : 'deactivate'}>
+                <Link href="/" passHref>
+                  <NavLink color={router.pathname === '/' ? 'active' : 'deactivate'}>
                     {ensOrAddress}
                   </NavLink>
                 </Link>

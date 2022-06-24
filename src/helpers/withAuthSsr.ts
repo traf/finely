@@ -16,7 +16,7 @@ function withAuth<P extends { [key: string]: unknown } = { [key: string]: unknow
       return {
         redirect: {
           permanent: false,
-          destination: `/siwe?portalId=${process.env.PORTAL_ID}`
+          destination: `/siwe?portalId=${process.env.NEXT_PUBLIC_PORTAL_ID}`
         }
       };
     }
@@ -27,7 +27,7 @@ function withAuth<P extends { [key: string]: unknown } = { [key: string]: unknow
       return {
         redirect: {
           permanent: false,
-          destination: process.env.MARKETING_SITE_URL
+          destination: process.env.NEXT_PUBLIC_MARKETING_SITE_URL
         }
       };
     }

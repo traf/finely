@@ -25,9 +25,8 @@ export function UserContextProvider({ children }: { children: React.ReactNode })
   const logoutMutation = useMutationLogout();
 
   const logout = useCallback(async () => {
-    console.log('here');
-    router.push('/');
     await logoutMutation.mutateAsync();
+    router.push(process.env.NEXT_PUBLIC_MARKETING_SITE_URL);
   }, []);
 
   useEffect(() => {
