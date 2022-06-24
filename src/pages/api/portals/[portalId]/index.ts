@@ -16,6 +16,7 @@ export default async function getPortal(req: NextApiRequest, res: NextApiRespons
   switch (method) {
     case 'GET': {
       const portalId = req.query.portalId as string;
+
       if (!portalId) {
         return res.status(400).json({ message: 'Bad Request' });
       }
@@ -25,6 +26,8 @@ export default async function getPortal(req: NextApiRequest, res: NextApiRespons
           id: portalId
         },
         select: {
+          name: true,
+          redirectUrl: true,
           fallbackPageUrl: true,
           protectedPageUrl: true,
           connectButtonClassName: true,

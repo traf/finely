@@ -1,5 +1,6 @@
 import { SiweMessage } from 'siwe';
 import { useRouter } from 'next/router';
+import { useQuery } from 'react-query';
 import { useEffect, useState } from 'react';
 import { useAccount, useConnect, useDisconnect, useNetwork, useSignMessage } from 'wagmi';
 import { Box, Button, H1, Paragraph, Text } from '@root/src/components/core';
@@ -15,7 +16,19 @@ import { createSignatureMessage } from '@helpers/createSignatureMessage';
 import { usePrevious } from '@root/src/hooks/usePrevious';
 
 // components
+import { Loader } from '@components/Loader';
 import IconETH from '@root/src/components/IconETH';
+
+async function getPortalData(portalId: string) {
+  const {
+    data: { portal }
+  } = await api({
+    method: 'GET',
+    url: `/portals/${portalId}`
+  });
+
+  return { portal };
+}
 
 async function verifyMessage({ message, signature }: { message: SiweMessage; signature: string }) {
   const {
@@ -36,15 +49,6 @@ async function fetchNonce() {
   });
 
   return data.nonce;
-}
-
-async function fetchWallet() {
-  const { data } = await api({
-    method: 'GET',
-    url: `/siwe/me`
-  });
-
-  return data.walletAddress;
 }
 
 export function ConnectButton({
@@ -115,6 +119,15 @@ export default function SignInWithWallet() {
   const { data: accountData } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const previousWalletAddress = usePrevious(accountData?.address);
+
+  const portalId = router.query.portalId as string;
+  const {
+    data: portalData,
+    isError: isErrorPortalData,
+    isLoading: isLoadingPortalData
+  } = useQuery(['portal', portalId], () => {
+    return getPortalData(portalId);
+  });
 
   const [error, setError] = useState<string>(null);
   const [authState, setAuthState] = useState({
@@ -204,7 +217,17 @@ export default function SignInWithWallet() {
             border: '1px solid $border',
             '@md': { maxWidth: '400px' }
           }}>
-          {error ? (
+          {isLoadingPortalData && (
+            <Box css={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <H1 css={{ fontSize: '24px', marginBottom: 8 }}>Sign in with your wallet.</H1>
+              <Box css={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <Paragraph>Loading Portal details...</Paragraph>
+                <Loader />
+              </Box>
+            </Box>
+          )}
+
+          {!isLoadingPortalData && error && (
             <Box
               css={{
                 width: '100%',
@@ -214,7 +237,9 @@ export default function SignInWithWallet() {
               }}>
               <Paragraph>{error}</Paragraph>
             </Box>
-          ) : (
+          )}
+
+          {!isLoadingPortalData && portalData && !error && (
             <Box
               css={{
                 width: '100%',
@@ -224,7 +249,7 @@ export default function SignInWithWallet() {
               }}>
               <H1 css={{ fontSize: '24px', marginBottom: 8 }}>Sign in with your wallet.</H1>
               <Paragraph css={{ marginBottom: 16 }}>
-                {clientId} is requesting to connect your wallet.{' '}
+                {portalData.portal.name} is requesting to connect your wallet.{' '}
               </Paragraph>
               <ConnectButton onSignMessage={() => signIn()} isSigningIn={authState?.loading} />
             </Box>
