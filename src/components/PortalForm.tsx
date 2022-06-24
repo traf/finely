@@ -344,8 +344,7 @@ export function PortalForm({ portal, rules, mode, onClose }: PortalFormProps) {
             />
             <FormErrorText>
               {errors.redirectUrl?.type === 'required' && `Provide a redirect URL.`}
-              {errors.redirectUrl?.type === 'validate' &&
-                `Invalid URL. It must be a valid https URL.`}
+              {errors.redirectUrl?.type === 'validate' && `Invalid URL. It must be a valid URL.`}
             </FormErrorText>
           </FormSection>
         )}
@@ -371,8 +370,7 @@ export function PortalForm({ portal, rules, mode, onClose }: PortalFormProps) {
               />
               <FormErrorText>
                 {errors.protectedUrl?.type === 'required' && `Provide a gated URL.`}
-                {errors.protectedUrl?.type === 'validate' &&
-                  `Invalid URL. It must be a valid https URL.`}
+                {errors.protectedUrl?.type === 'validate' && `Invalid URL. It must be a valid URL.`}
               </FormErrorText>
             </FormSection>
             <FormSection>
@@ -394,8 +392,7 @@ export function PortalForm({ portal, rules, mode, onClose }: PortalFormProps) {
               />
               <FormErrorText>
                 {errors.fallbackUrl?.type === 'required' && `Provide a fallback URL.`}
-                {errors.fallbackUrl?.type === 'validate' &&
-                  `Invalid URL. It must be a valid https URL.`}
+                {errors.fallbackUrl?.type === 'validate' && `Invalid URL. It must be a valid URL.`}
               </FormErrorText>
             </FormSection>
           </>

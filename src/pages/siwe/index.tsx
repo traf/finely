@@ -1,9 +1,7 @@
-import { SiweMessage } from 'siwe';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import { useEffect, useState } from 'react';
-import { useAccount, useConnect, useDisconnect, useNetwork, useSignMessage } from 'wagmi';
-import { Box, Button, H1, Paragraph, Text } from '@root/src/components/core';
+import { useAccount, useConnect, useNetwork, useSignMessage } from 'wagmi';
 import { ConnectButton as RainbowKitConnectButton } from '@rainbow-me/rainbowkit';
 
 // libs
@@ -16,8 +14,9 @@ import { createSignatureMessage } from '@helpers/createSignatureMessage';
 import { usePrevious } from '@root/src/hooks/usePrevious';
 
 // components
+import IconETH from '@components/IconETH';
 import { Loader } from '@components/Loader';
-import IconETH from '@root/src/components/IconETH';
+import { Box, Button, H1, Paragraph } from '@components/core';
 
 async function getPortalData(portalId: string) {
   const {
@@ -28,18 +27,6 @@ async function getPortalData(portalId: string) {
   });
 
   return { portal };
-}
-
-async function verifyMessage({ message, signature }: { message: SiweMessage; signature: string }) {
-  const {
-    data: { code, walletAddress }
-  } = await api({
-    method: 'POST',
-    url: `/siwe/verify`,
-    data: { message, signature }
-  });
-
-  return { code, walletAddress };
 }
 
 async function fetchNonce() {
@@ -113,7 +100,6 @@ export function ConnectButton({
 
 export default function SignInWithWallet() {
   const router = useRouter();
-  const { redirectUri, clientId } = router.query;
   const { activeChain } = useNetwork();
   const { activeConnector } = useConnect();
   const { data: accountData } = useAccount();
@@ -123,7 +109,7 @@ export default function SignInWithWallet() {
   const portalId = router.query.portalId as string;
   const {
     data: portalData,
-    isError: isErrorPortalData,
+    error: portalDataError,
     isLoading: isLoadingPortalData
   } = useQuery(['portal', portalId], () => {
     return getPortalData(portalId);
@@ -157,8 +143,12 @@ export default function SignInWithWallet() {
         message: message.prepareMessage()
       });
 
-      const { code, walletAddress } = await verifyMessage({ message, signature });
-      setAuthState((x) => ({ ...x, address: walletAddress, code, loading: false }));
+      const queryParams = new URLSearchParams({
+        portalId,
+        signature,
+        message: message.toMessage()
+      });
+      router.push(`/api/siwe/verify?${queryParams}`);
     } catch (error) {
       setAuthState((x) => ({ ...x, error, loading: false }));
     }
@@ -179,25 +169,23 @@ export default function SignInWithWallet() {
   ]);
 
   useEffect(() => {
+    if (portalDataError) {
+      setError('Portal not found.');
+    }
+
     if (authState.error) {
-      console.log('Redirect!');
+      setError(`We couldn't connect your wallet, please try again.`);
     }
-  }, [authState.error]);
+  }, [authState.error, portalDataError]);
 
   useEffect(() => {
-    if (authState?.code) {
-      router.push(`${redirectUri}?code=${authState.code}`);
-    }
-  }, [authState?.code]);
-
-  useEffect(() => {
-    if (!redirectUri || !clientId) {
-      setError('Invalid redirect URI or client ID');
+    if (!portalId) {
+      setError('Invalid Portal');
       return;
     }
 
     setError(null);
-  }, [redirectUri, clientId, setError]);
+  }, [portalId, setError]);
 
   return (
     <Box

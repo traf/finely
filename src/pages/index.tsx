@@ -16,7 +16,7 @@ export const getServerSideProps = withSessionSsr(async function getServerSidePro
   if (!user) {
     return {
       redirect: {
-        destination: '/siwe?redirectUri=http://localhost:3000/api/auth/authenticate&clientId=0x123',
+        destination: '/siwe?portalId=cl4rz6wmn0118lw0nnsvtvf67',
         permanent: false
       }
     };

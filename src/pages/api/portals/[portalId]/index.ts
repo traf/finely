@@ -44,6 +44,10 @@ export default async function getPortal(req: NextApiRequest, res: NextApiRespons
         }
       });
 
+      if (!portal) {
+        return res.status(404).send({ error: 'Portal not found.' });
+      }
+
       return res.send({ portal });
     }
     default:
